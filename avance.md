@@ -56,9 +56,9 @@ Este archivo sirve como punto de transferencia y balance del progreso actual del
 - [x] **Persistencia:** Guardar búsquedas (Backend Table + API).
 - [x] **Gestión:** Archivar/Ocultar inmuebles.
 
-### **Fase 5: Integración de Acciones (PENDIENTE)**
-- [ ] Implementar el botón de **WhatsApp** en la tabla con un mensaje pre-rellenado (Ej: "Hola, vi este inmueble en su web...").
-- [ ] Vista de detalle individual para cada propiedad.
+### **Fase 5: Integración de Acciones (COMPLETADO)**
+- [x] **Frontend:** Botón de WhatsApp funcional con mensaje pre-rellenado.
+- [x] **Frontend:** Vista de Detalle (Modal) completa con estilos y navegación.
 
 ### **Fase 6: Analítica**
 - [ ] Implementar lógica de Backend para calcular `Precio/m²` promedio por zona.

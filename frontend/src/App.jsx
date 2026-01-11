@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './App.css'
 import PropertiesTable from './components/PropertiesTable'
 import FiltersBar from './components/FiltersBar'
+import PropertyModal from './components/PropertyModal'
 
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
@@ -12,6 +13,7 @@ function App() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, bySource: {} });
+  const [selectedProperty, setSelectedProperty] = useState(null);
 
   // Keep track of current filters for refresh actions
   const [currentFilters, setCurrentFilters] = useState({});
@@ -70,6 +72,14 @@ function App() {
     }
   };
 
+  const handleSelectProperty = (property) => {
+    setSelectedProperty(property);
+  };
+
+  const handleCloseModal = () => {
+    setSelectedProperty(null);
+  };
+
   const triggerScrape = async (portal) => {
     try {
       await fetch(`http://localhost:8000/scrape/${portal}`, { method: 'POST' });
@@ -121,10 +131,21 @@ function App() {
         {loading ? (
           <div className="loading-state">Cargando datos...</div>
         ) : (
-          <PropertiesTable properties={properties} onStatusChange={handleStatusChange} />
+          <PropertiesTable
+            properties={properties}
+            onStatusChange={handleStatusChange}
+            onSelectProperty={handleSelectProperty}
+          />
         )}
       </main>
-    </div >
+
+      {selectedProperty && (
+        <PropertyModal
+          property={selectedProperty}
+          onClose={handleCloseModal}
+        />
+      )}
+    </div>
   )
 }
 

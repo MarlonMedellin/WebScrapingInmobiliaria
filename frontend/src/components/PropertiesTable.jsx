@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PropertiesTable = ({ properties, onStatusChange }) => {
+const PropertiesTable = ({ properties, onStatusChange, onSelectProperty }) => {
     if (!properties || properties.length === 0) {
         return <div className="p-4 text-center text-gray-400">No hay propiedades recolectadas aún.</div>;
     }
@@ -50,7 +50,14 @@ const PropertiesTable = ({ properties, onStatusChange }) => {
                         return (
                             <tr key={prop.id} className={isArchived ? 'archived-row' : ''}>
                                 <td>{getSourceBadge(prop.source)}</td>
-                                <td>{prop.title}</td>
+                                <td>
+                                    <span
+                                        className="property-title-clickable"
+                                        onClick={() => onSelectProperty(prop)}
+                                    >
+                                        {prop.title}
+                                    </span>
+                                </td>
                                 <td>{prop.location}</td>
                                 <td>{prop.area ? `${prop.area} m²` : '--'}</td>
                                 <td>{prop.bedrooms || '--'}</td>
@@ -65,6 +72,15 @@ const PropertiesTable = ({ properties, onStatusChange }) => {
                                             title="Ver Original"
                                         >
                                             🔗
+                                        </a>
+                                        <a
+                                            href={`https://wa.me/?text=${encodeURIComponent(`Hola, vi este inmueble y me interesa: ${prop.title} en ${prop.location}. Precio: ${formatPrice(prop.price)}. Link: ${prop.link}`)}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="action-icon-btn whatsapp"
+                                            title="Consultar por WhatsApp"
+                                        >
+                                            📱
                                         </a>
                                         {isArchived ? (
                                             <button
