@@ -1,0 +1,84 @@
+services:
+  # Base de Datos PostgreSQL
+  db:
+    image: postgres:16-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-admin}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-secret}
+      POSTGRES_DB: ${POSTGRES_DB:-realestate_db}
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    command: >
+      postgres -c shared_buffers=2GB -c effective_cache_size=6GB -c maintenance_work_mem=512MB -c checkpoint_completion_target=0.9 -c wal_buffers=16MB -c default_statistics_target=100 -c random_page_cost=1.1 -c effective_io_concurrency=200 -c work_mem=64MB -c min_wal_size=1GB -c max_wal_size=4GB
+    networks:
+      - app_network
+
+  # Cola de Tareas Redis
+  redis:
+    image: redis:alpine
+    restart: always
+    command: redis-server --appendonly yes
+    volumes:
+      - ./redis_data:/data
+    networks:
+      - app_network
+
+  # Backend API
+  backend:
+    build: ./backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-realestate_db}
+      - POSTGRES_HOST=db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+    networks:
+      - app_network
+
+  # Celery Worker for Scraping
+  worker:
+    build: ./backend
+    # Running celery worker. 
+    # -A worker.celery_app refers to a file worker.py and celery_app object. We need to create this.
+    command: celery -A core.worker.celery_app worker --loglevel=info --concurrency=3
+    volumes:
+      - ./backend:/app
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-realestate_db}
+      - POSTGRES_HOST=db
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+    shm_size: '2gb' # Required for Playwright to avoid crashes
+    ipc: host # Recommended for Playwright
+    networks:
+      - app_network
+  # Frontend React App
+  frontend:
+    build: ./frontend
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

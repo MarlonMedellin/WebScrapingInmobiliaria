@@ -1,0 +1,12 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+playwright
+celery
+redis
+python-dotenv
+alembic
+asyncpg
+greenlet
+beautifulsoup4
