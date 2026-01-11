@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import PropertiesTable from './components/PropertiesTable'
+import FiltersBar from './components/FiltersBar'
 
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
@@ -12,10 +13,24 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, bySource: {} });
 
-  const fetchProperties = async () => {
+  // Keep track of current filters for refresh actions
+  const [currentFilters, setCurrentFilters] = useState({});
+
+  const fetchProperties = async (filters = {}) => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/properties?limit=200');
+      // Construct Query Params
+      const params = new URLSearchParams({ limit: 200 }); // Default limit
+
+      if (filters.source) params.append('source', filters.source);
+      if (filters.search) params.append('search', filters.search);
+      if (filters.min_price) params.append('min_price', filters.min_price);
+      if (filters.max_price) params.append('max_price', filters.max_price);
+      if (filters.min_area) params.append('min_area', filters.min_area);
+      if (filters.max_area) params.append('max_area', filters.max_area);
+      if (filters.show_archived) params.append('show_archived', 'true');
+
+      const response = await fetch(`http://localhost:8000/properties?${params.toString()}`);
       const data = await response.json();
 
       setProperties(data);
@@ -31,6 +46,27 @@ function App() {
       console.error("Error fetching properties:", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setCurrentFilters(newFilters);
+    fetchProperties(newFilters);
+  };
+
+  const handleStatusChange = async (id, newStatus) => {
+    try {
+      // Optimistic UI update
+      setProperties(prev => prev.filter(p => p.id !== id));
+
+      await fetch(`http://localhost:8000/properties/${id}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: newStatus })
+      });
+    } catch (e) {
+      console.error("Status update failed", e);
+      fetchProperties(currentFilters); // Revert on error
     }
   };
 
@@ -58,7 +94,7 @@ function App() {
         <div className="stats-grid">
           <div className="stat-card summary">
             <div className="stat-value">{stats.total}</div>
-            <div className="stat-label">Total Propiedades</div>
+            <div className="stat-label">Propiedades Listadas</div>
           </div>
           {PORTALS.map(source => (
             <div className="stat-card" key={source}>
@@ -70,11 +106,13 @@ function App() {
         </div>
       </section>
 
+      <FiltersBar onFilterChange={handleFilterChange} portals={PORTALS} />
+
       <main>
         <div className="main-header">
-          <h2>Últimos Ingresos</h2>
+          <h2>Resultados de Búsqueda</h2>
           <div className="actions">
-            <button className="action-btn secondary" onClick={fetchProperties}>
+            <button className="action-btn secondary" onClick={() => fetchProperties(currentFilters)}>
               ↻ Actualizar Datos
             </button>
           </div>
@@ -83,10 +121,10 @@ function App() {
         {loading ? (
           <div className="loading-state">Cargando datos...</div>
         ) : (
-          <PropertiesTable properties={properties} />
+          <PropertiesTable properties={properties} onStatusChange={handleStatusChange} />
         )}
       </main>
-    </div>
+    </div >
   )
 }
 

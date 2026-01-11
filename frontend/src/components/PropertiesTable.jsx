@@ -1,6 +1,6 @@
 import React from 'react';
 
-const PropertiesTable = ({ properties }) => {
+const PropertiesTable = ({ properties, onStatusChange }) => {
     if (!properties || properties.length === 0) {
         return <div className="p-4 text-center text-gray-400">No hay propiedades recolectadas aún.</div>;
     }
@@ -45,26 +45,49 @@ const PropertiesTable = ({ properties }) => {
                     </tr>
                 </thead>
                 <tbody>
-                    {properties.map((prop) => (
-                        <tr key={prop.id}>
-                            <td>{getSourceBadge(prop.source)}</td>
-                            <td>{prop.title}</td>
-                            <td>{prop.location}</td>
-                            <td>{prop.area ? `${prop.area} m²` : '--'}</td>
-                            <td>{prop.bedrooms || '--'}</td>
-                            <td className="price-tag">{formatPrice(prop.price)}</td>
-                            <td>
-                                <a
-                                    href={prop.link}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="property-link"
-                                >
-                                    Ver Original →
-                                </a>
-                            </td>
-                        </tr>
-                    ))}
+                    {properties.map((prop) => {
+                        const isArchived = prop.status === 'ARCHIVED';
+                        return (
+                            <tr key={prop.id} className={isArchived ? 'archived-row' : ''}>
+                                <td>{getSourceBadge(prop.source)}</td>
+                                <td>{prop.title}</td>
+                                <td>{prop.location}</td>
+                                <td>{prop.area ? `${prop.area} m²` : '--'}</td>
+                                <td>{prop.bedrooms || '--'}</td>
+                                <td className="price-tag">{formatPrice(prop.price)}</td>
+                                <td>
+                                    <div className="action-row">
+                                        <a
+                                            href={prop.link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="property-link"
+                                            title="Ver Original"
+                                        >
+                                            🔗
+                                        </a>
+                                        {isArchived ? (
+                                            <button
+                                                className="action-icon-btn restore"
+                                                onClick={() => onStatusChange(prop.id, 'NEW')}
+                                                title="Restaurar"
+                                            >
+                                                ⟲
+                                            </button>
+                                        ) : (
+                                            <button
+                                                className="action-icon-btn archive"
+                                                onClick={() => onStatusChange(prop.id, 'ARCHIVED')}
+                                                title="Archivar"
+                                            >
+                                                ✖
+                                            </button>
+                                        )}
+                                    </div>
+                                </td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>

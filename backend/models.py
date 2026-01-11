@@ -25,9 +25,19 @@ class Property(Base):
     
     # Tracking prices and status
     active = Column(Boolean, default=True)
+    status = Column(String, default="NEW") # NEW, SEEN, ARCHIVED, FAVORITE
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     last_seen = Column(DateTime(timezone=True), server_default=func.now())
 
     def __repr__(self):
-        return f"<Property(id={self.id}, title={self.title}, price={self.price})>"
+        return f"<Property(id={self.id}, title={self.title}, price={self.price}, status={self.status})>"
+
+class SavedSearch(Base):
+    __tablename__ = "saved_searches"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String, nullable=False)
+    criteria = Column(Text, nullable=False) # JSON string with filters
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+

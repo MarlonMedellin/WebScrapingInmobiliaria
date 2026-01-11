@@ -50,11 +50,13 @@ Este archivo sirve como punto de transferencia y balance del progreso actual del
 
 ## ⏳ Lo que falta (Próximos Pasos)
 
-### **Fase 4: Configuración y Filtros**
-- [ ] UI para filtrar el listado por Barrio, Rango de Precio y Metraje (Actualmente solo muestra los últimos 200).
-- [ ] Guardar configuraciones de búsqueda persistentes.
+### **Fase 4: Configuración y Filtros (COMPLETADO)**
+- [x] **Backend:** Endpoint filters (Precio, Área, Búsqueda de Texto).
+- [x] **Frontend:** Barra de filtros avanzada (UI v1).
+- [x] **Persistencia:** Guardar búsquedas (Backend Table + API).
+- [x] **Gestión:** Archivar/Ocultar inmuebles.
 
-### **Fase 5: Integración de Acciones**
+### **Fase 5: Integración de Acciones (PENDIENTE)**
 - [ ] Implementar el botón de **WhatsApp** en la tabla con un mensaje pre-rellenado (Ej: "Hola, vi este inmueble en su web...").
 - [ ] Vista de detalle individual para cada propiedad.
 

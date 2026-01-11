@@ -1,0 +1,223 @@
+.filters-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1.5rem;
+    background-color: var(--card-bg);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    align-items: center;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.search-group {
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.range-group {
+    background: rgba(255, 255, 255, 0.05);
+    padding: 0.25rem 0.5rem;
+    border-radius: 8px;
+    border: 1px solid var(--border-color);
+}
+
+.filter-input,
+.filter-select {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 0.75rem;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+}
+
+.search-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: transparent;
+}
+
+.search-input:focus {
+    background-color: var(--bg-color);
+    border-color: var(--primary-color);
+}
+
+.filter-select {
+    background-color: var(--bg-color);
+    cursor: pointer;
+}
+
+/* Fix for invisible text in dropdowns on some browsers/OS */
+.filter-select option {
+    color: #1e293b;
+    /* Dark text for options */
+    background-color: #f8fafc;
+    /* Light background for options */
+}
+
+.range-group .filter-input {
+    width: 100px;
+    border: none;
+    background: transparent;
+    padding: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.separator {
+    color: var(--text-secondary);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+.action-btn.small {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+}
+
+
+/* NEW STYLES */
+.filters-container {
+    margin-bottom: 2rem;
+}
+
+.saved-searches-row {
+    min-height: 20px;
+    margin-bottom: 0.5rem;
+}
+
+.saved-chips {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.chips-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-right: 0.5rem;
+}
+
+.search-chip {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    color: var(--primary-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 100px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s;
+}
+
+.search-chip:hover {
+    background: rgba(99, 102, 241, 0.2);
+}
+
+.delete-chip {
+    opacity: 0.5;
+    font-weight: bold;
+}
+
+.delete-chip:hover {
+    opacity: 1;
+    color: #ef4444;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: var(--text-secondary);
+}
+
+.save-popover {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: var(--bg-color);
+    padding: 0.25rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+    animation: fadeIn 0.2s ease-out;
+}
+
+.small-input {
+    width: 150px;
+    padding: 0.25rem 0.5rem;
+}
+
+.action-btn.ghost {
+    background: transparent;
+    border: 1px dashed var(--border-color);
+    color: var(--text-secondary);
+}
+
+.action-btn.ghost:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.action-btn.text {
+    background: transparent;
+    padding: 0.25rem;
+    color: var(--text-secondary);
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+    .filters-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .filter-actions {
+        margin-left: 0;
+        justify-content: flex-end;
+    }
+
+    .range-group {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .range-group .filter-input {
+        width: 45%;
+    }
+}
