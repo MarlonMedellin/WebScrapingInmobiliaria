@@ -32,7 +32,7 @@ class EscalaInmobiliariaScraper(BaseScraper):
             content = await self.page.content()
             soup = BeautifulSoup(content, 'html.parser')
             
-            cards = soup.select(".vi-cont-card")
+            cards = soup.select(".card.card-space")
             if not cards:
                 logger.info(f"[{self.portal_name}] No se encontraron más propiedades.")
                 break
@@ -42,23 +42,25 @@ class EscalaInmobiliariaScraper(BaseScraper):
             for card in cards:
                 try:
                     # Link
-                    link_tag = card.select_one("a.vi-link-card")
+                    link_tag = card.select_one("a.inmueblelink")
                     if not link_tag: continue
                     full_link = link_tag['href']
                     if not full_link.startswith("http"):
                         full_link = f"{self.base_url.rstrip('/')}{full_link}"
 
-                    # Title & Type
-                    title_tag = card.select_one(".vi-title-card")
-                    title = title_tag.get_text(strip=True) if title_tag else "Apartamento en Arriendo"
+                    # Title & Type (Escala suele tener el tipo en el link o breadcrumb, usamos el link text o un genérico)
+                    title = "Apartamento en Arriendo"
+                    title_tag = card.select_one(".cb-nombre")
+                    if title_tag:
+                        title = title_tag.get_text(strip=True)
                     
                     # Price
-                    price_tag = card.select_one(".vi-price-card")
+                    price_tag = card.select_one("h4")
                     price_text = price_tag.get_text(strip=True) if price_tag else "0"
                     price = int(re.sub(r'[^\d]', '', price_text)) if re.sub(r'[^\d]', '', price_text) else 0
                     
                     # Image
-                    image_tag = card.select_one(".vi-img-card img")
+                    image_tag = card.select_one(".card-img-top img")
                     image_url = image_tag['src'] if image_tag else None
 
                     # Features (Area, Rooms, Baths)
@@ -67,9 +69,16 @@ class EscalaInmobiliariaScraper(BaseScraper):
                     bathrooms = 0
                     location = "Medellín"
                     
-                    features = card.select(".vi-inf-card span")
-                    for feat in features:
-                        text = feat.get_text(strip=True).lower()
+                    # Las ubicaciones están en .vi-link-ubicacion, el último suele ser el barrio
+                    loc_tags = card.select(".vi-link-ubicacion")
+                    if loc_tags:
+                        location = ", ".join([l.get_text(strip=True) for l in loc_tags])
+
+                    # Características suelen estar en spans dentro del card
+                    # Buscamos por texto ya que las clases pueden variar
+                    spans = card.select("span")
+                    for s in spans:
+                        text = s.get_text(strip=True).lower()
                         if "m2" in text or "m²" in text:
                             match = re.search(r'([\d.,]+)', text)
                             if match: area = float(match.group(1).replace(',', '.'))
@@ -79,11 +88,6 @@ class EscalaInmobiliariaScraper(BaseScraper):
                         elif "baño" in text:
                             match = re.search(r'(\d+)', text)
                             if match: bathrooms = int(match.group(1))
-
-                    # Ubicación específica (generalmente en una etiqueta p o div)
-                    loc_tag = card.select_one(".vi-loc-card")
-                    if loc_tag:
-                        location = loc_tag.get_text(strip=True)
 
                     entry = {
                         "title": title,
