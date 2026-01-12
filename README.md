@@ -18,6 +18,8 @@ Un sistema avanzado de web scraping y monitoreo inmobiliario diseñado para reco
 - **Dockerizado:** Entorno consistente para base de datos (PostgreSQL 16), cola de tareas (Redis) y worker.
 - **Procesamiento Asíncrono:** Celery para navegación concurrente sin afectar la respuesta de la API.
 - **Frontend Premium:** React + Vite con diseño moderno, micro-animaciones y feedback de scraping en tiempo real.
+- **Seguridad y Control:** Implementación de API Key, Rate Limiting por IP para scrapers y CORS controlado.
+- **Automatización de Limpieza:** Celery Beat para archivar automáticamente anuncios que no han sido vistos en 3 días.
 
 ## 🛠️ Stack Tecnológico
 
@@ -52,6 +54,14 @@ WebScrapingInmobiliaria/
 1.  Asegurar tener Docker instalado.
 2.  Ejecutar `docker-compose up -d --build`.
 3.  Acceder a `http://localhost:5173`.
+
+### Configuración de Variables de Entorno (.env)
+El sistema utiliza las siguientes variables clave:
+- `API_KEY`: Llave para autorizar acciones críticas (scrape, borrar búsquedas, etc).
+- `ALLOWED_ORIGINS`: Dominios permitidos por CORS (ej: `https://tu-dominio.com,http://localhost:5173`).
+- `REDIS_URL`: Conexión al broker de Celery.
+- `POSTGRES_SHARED_BUFFERS`: RAM asignada a la base de datos (ej: `2GB`).
+- `VITE_API_KEY`: (Frontend) Debe coincidir con `API_KEY`.
 
 ---
 **Desarrollado para optimizar la toma de decisiones en el mercado inmobiliario de Medellín.**

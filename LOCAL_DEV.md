@@ -52,6 +52,9 @@ POSTGRES_PORT=5433
 REDIS_URL=redis://localhost:6380/0
 
 VITE_API_BASE_URL=http://localhost:8000
+API_KEY=dev-secret-key
+VITE_API_KEY=dev-secret-key
+ALLOWED_ORIGINS=http://localhost:5173,http://127.0.0.1:5173
 ```
 
 #### 3. Levantar servicios

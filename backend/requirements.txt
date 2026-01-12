@@ -13,3 +13,4 @@ beautifulsoup4
 pytest
 httpx
 pytest-asyncio
+slowapi

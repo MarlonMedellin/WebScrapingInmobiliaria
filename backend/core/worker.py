@@ -16,6 +16,13 @@ celery_app.conf.update(
     result_serializer="json",
     timezone="America/Bogota",
     enable_utc=True,
+    beat_schedule={
+        "cleanup-stale-properties-daily": {
+            "task": "cleanup_stale_properties",
+            "schedule": 86400.0, # Every 24 hours
+            "args": (3,), # Age in days
+        },
+    },
 )
 
 # Import tasks so they are registered

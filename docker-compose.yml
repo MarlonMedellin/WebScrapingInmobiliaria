@@ -12,18 +12,7 @@ services:
     ports:
       - "5432:5432"
     command: >
-      postgres 
-      -c shared_buffers=${POSTGRES_SHARED_BUFFERS:-256MB} 
-      -c effective_cache_size=${POSTGRES_CACHE_SIZE:-768MB} 
-      -c maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM:-64MB} 
-      -c checkpoint_completion_target=0.9 
-      -c wal_buffers=16MB 
-      -c default_statistics_target=100 
-      -c random_page_cost=1.1 
-      -c effective_io_concurrency=200 
-      -c work_mem=${POSTGRES_WORK_MEM:-16MB} 
-      -c min_wal_size=1GB 
-      -c max_wal_size=4GB
+      postgres  -c shared_buffers=${POSTGRES_SHARED_BUFFERS:-256MB}  -c effective_cache_size=${POSTGRES_CACHE_SIZE:-768MB}  -c maintenance_work_mem=${POSTGRES_MAINTENANCE_WORK_MEM:-64MB}  -c checkpoint_completion_target=0.9  -c wal_buffers=16MB  -c default_statistics_target=100  -c random_page_cost=1.1  -c effective_io_concurrency=200  -c work_mem=${POSTGRES_WORK_MEM:-16MB}  -c min_wal_size=1GB  -c max_wal_size=4GB
     networks:
       - app_network
 
@@ -76,6 +65,19 @@ services:
       - redis
     shm_size: '2gb' # Required for Playwright to avoid crashes
     ipc: host # Recommended for Playwright
+    networks:
+      - app_network
+
+  # Celery Beat for Scheduled Tasks
+  beat:
+    build: ./backend
+    command: celery -A core.worker.celery_app beat --loglevel=info
+    volumes:
+      - ./backend:/app
+    environment:
+      - REDIS_URL=redis://redis:6379/0
+    depends_on:
+      - redis
     networks:
       - app_network
   # Frontend React App
