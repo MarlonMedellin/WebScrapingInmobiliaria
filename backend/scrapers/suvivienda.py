@@ -21,7 +21,7 @@ class SuViviendaScraper(BaseScraper):
                 # La URL usa el nombre del tipo en la ruta
                 # Normalizamos un poco para la URL (suvivienda usa Capitalizado generalmente pero el router suele ser flexible)
                 url_type = p_type.capitalize()
-                url = f"{self.base_url}/inmuebles/Arriendo/{url_type}/Medellin/"
+                url = f"{self.base_url}/inmuebles/Arriendo/{url_type}/Medellín/"
                 logger.info(f"[{self.portal_name}] Iniciando scraping para tipo: {p_type}")
                 await self._scrape_url(url)
                 
