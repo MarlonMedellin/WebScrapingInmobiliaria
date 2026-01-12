@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './FiltersBar.css';
+import API_BASE_URL from '../config';
 
 const FiltersBar = ({ onFilterChange, portals }) => {
     const [filters, setFilters] = useState({
@@ -22,7 +23,7 @@ const FiltersBar = ({ onFilterChange, portals }) => {
 
     const loadSavedSearches = async () => {
         try {
-            const res = await fetch('http://localhost:8000/searches');
+            const res = await fetch(`${API_BASE_URL}/searches`);
             if (res.ok) setSavedSearches(await res.json());
         } catch (e) {
             console.error("Error loading searches", e);
@@ -59,7 +60,7 @@ const FiltersBar = ({ onFilterChange, portals }) => {
     const handleSaveSearch = async () => {
         if (!searchName) return alert("Ponle un nombre a tu búsqueda");
         try {
-            const res = await fetch('http://localhost:8000/searches', {
+            const res = await fetch(`${API_BASE_URL}/searches`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: searchName, criteria: filters })
@@ -84,7 +85,7 @@ const FiltersBar = ({ onFilterChange, portals }) => {
     const deleteSearch = async (id, e) => {
         e.stopPropagation();
         if (!confirm("¿Borrar búsqueda?")) return;
-        await fetch(`http://localhost:8000/searches/${id}`, { method: 'DELETE' });
+        await fetch(`${API_BASE_URL}/searches/${id}`, { method: 'DELETE' });
         loadSavedSearches();
     }
 

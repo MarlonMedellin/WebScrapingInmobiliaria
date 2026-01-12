@@ -1,0 +1,71 @@
+# Docker Compose para desarrollo local conectado a VPS
+# Uso: docker-compose -f docker-compose.local.yml up -d
+#
+# PREREQUISITOS:
+# 1. Crear túneles SSH al VPS:
+#    ssh -L 5433:localhost:5432 vps-scraping -N -f
+#    ssh -L 6380:localhost:6379 vps-scraping -N -f
+# 2. Crear archivo .env.local con las variables de entorno
+
+services:
+  # Backend API
+  backend:
+    build: ./backend
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      # Conecta a PostgreSQL del VPS vía túnel SSH
+      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-realestate_db}
+      - POSTGRES_HOST=host.docker.internal
+      - POSTGRES_PORT=5433
+      # Conecta a Redis del VPS vía túnel SSH
+      - REDIS_URL=redis://host.docker.internal:6380/0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    networks:
+      - app_network
+
+  # Celery Worker for Scraping
+  worker:
+    build: ./backend
+    command: celery -A core.worker.celery_app worker --loglevel=info --concurrency=3
+    volumes:
+      - ./backend:/app
+    environment:
+      # Conecta a PostgreSQL del VPS vía túnel SSH
+      - POSTGRES_USER=${POSTGRES_USER:-admin}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-realestate_db}
+      - POSTGRES_HOST=host.docker.internal
+      - POSTGRES_PORT=5433
+      # Conecta a Redis del VPS vía túnel SSH
+      - REDIS_URL=redis://host.docker.internal:6380/0
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    shm_size: '2gb'
+    ipc: host
+    networks:
+      - app_network
+
+  # Frontend React App
+  frontend:
+    build: ./frontend
+    command: npm run dev -- --host
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:8000
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge

@@ -3,15 +3,12 @@ import './App.css'
 import PropertiesTable from './components/PropertiesTable'
 import FiltersBar from './components/FiltersBar'
 import PropertyModal from './components/PropertyModal'
+import API_BASE_URL from './config'
 
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
   "integridad", "protebienes", "lacastellana", "monserrate", "aportal"
 ];
-
-const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-  ? 'http://localhost:8000'
-  : `${window.location.protocol}//${window.location.host}/api`;
 
 function App() {
   const [properties, setProperties] = useState([]);
@@ -121,8 +118,8 @@ function App() {
             <div className={`stat-card ${scrapingPortals[source] ? 'scraping' : ''}`} key={source}>
               <div className="stat-value">{stats.bySource[source] || 0}</div>
               <div className="stat-label">{source}</div>
-              <button 
-                className={`mini-scrape-btn ${scrapingPortals[source] ? 'loading' : ''}`} 
+              <button
+                className={`mini-scrape-btn ${scrapingPortals[source] ? 'loading' : ''}`}
                 onClick={() => triggerScrape(source)}
                 disabled={scrapingPortals[source]}
               >
