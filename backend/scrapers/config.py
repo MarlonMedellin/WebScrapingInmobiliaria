@@ -4,7 +4,7 @@ SEARCH_CRITERIA = {
     "operation": "arriendo",
     "property_types": ["apartamento", "casa", "apartaestudios"],
     "neighborhoods": ["santa fe", "santafe", "santa fé", "san pablo", "campo amor"],
-    "max_price": 2200000,
+    "max_price": 3000000,
     "initial_limit": 50,  # Primeros 50 inmuebles
     "scroll_depth": 10    # Scrolls para alcanzar ~50 resultados
 }
