@@ -8,7 +8,7 @@ Un sistema avanzado de web scraping y monitoreo inmobiliario diseñado para reco
 - **9 Portales Integrados:** Fincaraiz, El Castillo, Santa Fe, Panda, Integridad, Protebienes, La Castellana, Monserrate y Aportal.
 - **Filtrado Automático:** Solo guarda inmuebles que cumplan criterios estrictos:
   - Operación: Arriendo, Tipos: Apartamentos, Casas, Apartaestudios.
-  - Zonas: Santa Fe, San Pablo, Campo Amor (filtrado estricto por barrio).
+  - Zonas: Santa Fe, San Pablo, Campo Amor, Guayabal, Trinidad, Belén, Rodeo y alrededores.
   - Precio máximo: $5,000,000 COP.
 - **Parada Temprana:** Detiene el scraping tras encontrar 10 inmuebles consecutivos ya indexados para optimizar recursos.
 

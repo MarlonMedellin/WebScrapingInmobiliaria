@@ -6,7 +6,9 @@ SEARCH_CRITERIA = {
     "neighborhoods": [
         "santa fe", "santafe", "santa fé", 
         "san pablo", "sanpablo",
-        "campo amor", "campoamor", "campos de amor"
+        "campo amor", "campoamor", "campos de amor",
+        "guayabal", "trinidad", "loma de los bernal", "bernal",
+        "rodeo", "rodeo alto", "belen", "las playas"
     ],
     "max_price": 5000000,
     "initial_limit": 50,  # Primeros 50 inmuebles
