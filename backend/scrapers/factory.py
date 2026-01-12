@@ -12,6 +12,7 @@ from .escalainmobiliaria import EscalaInmobiliariaScraper
 from .suvivienda import SuViviendaScraper
 from .portofino import PortofinoScraper
 from .nutibara import NutibaraScraper
+from .laaldea import LaAldeaScraper
 
 class ScraperFactory:
     @staticmethod
@@ -42,6 +43,8 @@ class ScraperFactory:
             return PortofinoScraper(db)
         elif portal_name == "nutibara":
             return NutibaraScraper(db)
+        elif portal_name == "laaldea":
+            return LaAldeaScraper(db)
         else:
             raise ValueError(f"Unknown scraper: {portal_name}")
             
@@ -60,6 +63,7 @@ class ScraperFactory:
             EscalaInmobiliariaScraper(db),
             SuViviendaScraper(db),
             PortofinoScraper(db),
-            NutibaraScraper(db)
+            NutibaraScraper(db),
+            LaAldeaScraper(db)
         ]
 
