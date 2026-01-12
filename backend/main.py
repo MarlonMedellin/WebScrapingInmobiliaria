@@ -194,7 +194,7 @@ def delete_search(search_id: int, db: Session = Depends(get_db)):
 @app.post("/scrape/{portal_key}")
 def trigger_scrape(portal_key: str):
     # Valid portals
-    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal"]
+    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal", "escalainmobiliaria"]
     if portal_key not in valid_portals:
 
         raise HTTPException(status_code=400, detail="Portal not supported")
