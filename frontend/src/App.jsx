@@ -18,6 +18,7 @@ function App() {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState({ total: 0, bySource: {} });
   const [selectedProperty, setSelectedProperty] = useState(null);
+  const [scrapingPortals, setScrapingPortals] = useState({});
 
   // Keep track of current filters for refresh actions
   const [currentFilters, setCurrentFilters] = useState({});
@@ -85,11 +86,17 @@ function App() {
   };
 
   const triggerScrape = async (portal) => {
+    setScrapingPortals(prev => ({ ...prev, [portal]: true }));
     try {
       await fetch(`${API_BASE_URL}/scrape/${portal}`, { method: 'POST' });
-      alert(`Scraping iniciado para ${portal}. Actualiza en unos segundos.`);
+      // We don't alert anymore, the button state changes
+      setTimeout(() => {
+        setScrapingPortals(prev => ({ ...prev, [portal]: false }));
+        fetchProperties(currentFilters);
+      }, 3000); // Give it some head start
     } catch (e) {
-      alert("Error iniciando scraping");
+      console.error("Error iniciando scraping", e);
+      setScrapingPortals(prev => ({ ...prev, [portal]: false }));
     }
   };
 
@@ -111,10 +118,16 @@ function App() {
             <div className="stat-label">Propiedades Listadas</div>
           </div>
           {PORTALS.map(source => (
-            <div className="stat-card" key={source}>
+            <div className={`stat-card ${scrapingPortals[source] ? 'scraping' : ''}`} key={source}>
               <div className="stat-value">{stats.bySource[source] || 0}</div>
               <div className="stat-label">{source}</div>
-              <button className="mini-scrape-btn" onClick={() => triggerScrape(source)}>▶</button>
+              <button 
+                className={`mini-scrape-btn ${scrapingPortals[source] ? 'loading' : ''}`} 
+                onClick={() => triggerScrape(source)}
+                disabled={scrapingPortals[source]}
+              >
+                {scrapingPortals[source] ? '⏳' : '▶'}
+              </button>
             </div>
           ))}
         </div>
