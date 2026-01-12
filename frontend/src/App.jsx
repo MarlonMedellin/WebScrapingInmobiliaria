@@ -7,7 +7,8 @@ import API_BASE_URL from './config'
 
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
-  "integridad", "protebienes", "lacastellana", "monserrate", "aportal"
+  "integridad", "protebienes", "lacastellana", "monserrate", "aportal",
+  "escalainmobiliaria"
 ];
 
 function App() {

@@ -8,6 +8,7 @@ from .protebienes import ProtebienesScraper
 from .lacastellana import CastellanaScraper
 from .monserrate import MonserrateScraper
 from .aportal import AportalScraper
+from .escalainmobiliaria import EscalaInmobiliariaScraper
 
 class ScraperFactory:
     @staticmethod
@@ -30,6 +31,8 @@ class ScraperFactory:
             return MonserrateScraper(db)
         elif portal_name == "aportal":
             return AportalScraper(db)
+        elif portal_name == "escalainmobiliaria":
+            return EscalaInmobiliariaScraper(db)
         else:
             raise ValueError(f"Unknown scraper: {portal_name}")
             
@@ -44,6 +47,7 @@ class ScraperFactory:
             ProtebienesScraper(db),
             CastellanaScraper(db),
             MonserrateScraper(db),
-            AportalScraper(db)
+            AportalScraper(db),
+            EscalaInmobiliariaScraper(db)
         ]
 
