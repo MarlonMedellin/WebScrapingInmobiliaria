@@ -78,23 +78,54 @@
         "los ángeles",
         "los angeles"
     ],
+    "san antonio de prado": [
+        "san antonio de prado",
+        "urb arboleda de san antonio",
+        "urb. prado verde",
+        "torres de bombona"
+    ],
     "Envigado": [
         "envigado",
         "zuñiga",
-        "la sebastiana"
+        "la sebastiana",
+        "ed. ambar"
     ],
     "Itagüí": [
         "itagui",
         "itagüí",
         "santa maria",
-        "ditaires"
+        "ditaires",
+        "centro",
+        "la finca",
+        "san pio",
+        "las acacias",
+        "calatrava",
+        "villa paula",
+        "san francisco",
+        "unidad aires de ditaires",
+        "playa rica",
+        "urb. tulipanes del sur",
+        "viviendas del sur",
+        "urb. villa sol",
+        "las margaritas",
+        "urb. las americas",
+        "asturias",
+        "urb. pacifica"
     ],
     "Sabaneta": [
         "sabaneta",
-        "las lomitas"
+        "las lomitas",
+        "holanda",
+        "ed. gireth",
+        "la doctora",
+        "century tower ii apartamentos",
+        "mayorca",
+        "ed. scala"
     ],
     "La Estrella": [
         "la estrella",
-        "estrella"
+        "estrella",
+        "suramerica",
+        "urb. rivera de suramerica"
     ]
 }
