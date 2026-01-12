@@ -46,17 +46,7 @@ Write-Host ""
 Write-Host "Paso 3: Actualizando VPS..." -ForegroundColor Yellow
 Write-Host "Ejecutando comandos en el VPS..." -ForegroundColor Gray
 
-ssh vps-scraping @"
-cd /root/WebScrapingInmobiliaria
-echo '--- Git Pull ---'
-git pull origin main
-echo ''
-echo '--- Restarting Services ---'
-docker compose restart worker backend
-echo ''
-echo '--- Service Status ---'
-docker compose ps
-"@
+ssh vps-scraping "cd /root/WebScrapingInmobiliaria && git pull origin main && docker compose restart worker backend && docker compose ps"
 
 Write-Host ""
 Write-Host "Deployment completado" -ForegroundColor Green
