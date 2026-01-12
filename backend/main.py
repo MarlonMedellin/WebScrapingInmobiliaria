@@ -226,7 +226,7 @@ def trigger_scrape(
     api_key: str = Depends(get_api_key)
 ):
     # Valid portals
-    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal", "escalainmobiliaria", "suvivienda"]
+    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal", "escalainmobiliaria", "suvivienda", "portofino"]
     if portal_key not in valid_portals:
 
         raise HTTPException(status_code=400, detail="Portal not supported")
