@@ -9,6 +9,10 @@ const PORTALS = [
   "integridad", "protebienes", "lacastellana", "monserrate", "aportal"
 ];
 
+const API_BASE_URL = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+  ? 'http://localhost:8000'
+  : `${window.location.protocol}//${window.location.host}/api`;
+
 function App() {
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +36,7 @@ function App() {
       if (filters.max_area) params.append('max_area', filters.max_area);
       if (filters.show_archived) params.append('show_archived', 'true');
 
-      const response = await fetch(`http://localhost:8000/properties?${params.toString()}`);
+      const response = await fetch(`${API_BASE_URL}/properties?${params.toString()}`);
       const data = await response.json();
 
       setProperties(data);
@@ -61,7 +65,7 @@ function App() {
       // Optimistic UI update
       setProperties(prev => prev.filter(p => p.id !== id));
 
-      await fetch(`http://localhost:8000/properties/${id}/status`, {
+      await fetch(`${API_BASE_URL}/properties/${id}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: newStatus })
@@ -82,7 +86,7 @@ function App() {
 
   const triggerScrape = async (portal) => {
     try {
-      await fetch(`http://localhost:8000/scrape/${portal}`, { method: 'POST' });
+      await fetch(`${API_BASE_URL}/scrape/${portal}`, { method: 'POST' });
       alert(`Scraping iniciado para ${portal}. Actualiza en unos segundos.`);
     } catch (e) {
       alert("Error iniciando scraping");
