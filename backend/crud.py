@@ -25,3 +25,22 @@ def update_property_price(db: Session, db_property: Property, new_price: str):
         # TODO: Log price change?
         db_property.price = new_price
     db.commit()
+
+def archive_stale_properties(db: Session, days: int = 3):
+    """
+    Mark properties as ARCHIVED if they haven't been seen in the last X days.
+    """
+    threshold = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=days)
+    
+    # Update status to ARCHIVED for properties older than threshold
+    # that are not already archived.
+    count = db.query(Property).filter(
+        Property.last_seen < threshold,
+        Property.status != 'ARCHIVED'
+    ).update(
+        {Property.status: 'ARCHIVED', Property.active: False}, 
+        synchronize_session=False
+    )
+    
+    db.commit()
+    return count

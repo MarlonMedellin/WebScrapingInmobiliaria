@@ -10,3 +10,6 @@ alembic
 asyncpg
 greenlet
 beautifulsoup4
+pytest
+httpx
+pytest-asyncio

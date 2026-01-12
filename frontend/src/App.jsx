@@ -3,12 +3,12 @@ import './App.css'
 import PropertiesTable from './components/PropertiesTable'
 import FiltersBar from './components/FiltersBar'
 import PropertyModal from './components/PropertyModal'
-import API_BASE_URL from './config'
+import { API_BASE_URL, API_KEY } from './config'
 
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
   "integridad", "protebienes", "lacastellana", "monserrate", "aportal",
-  "escalainmobiliaria"
+  "escalainmobiliaria", "suvivienda"
 ];
 
 function App() {
@@ -67,7 +67,10 @@ function App() {
 
       await fetch(`${API_BASE_URL}/properties/${id}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'X-API-Key': API_KEY
+        },
         body: JSON.stringify({ status: newStatus })
       });
     } catch (e) {
@@ -87,7 +90,10 @@ function App() {
   const triggerScrape = async (portal) => {
     setScrapingPortals(prev => ({ ...prev, [portal]: true }));
     try {
-      await fetch(`${API_BASE_URL}/scrape/${portal}`, { method: 'POST' });
+      await fetch(`${API_BASE_URL}/scrape/${portal}`, {
+        method: 'POST',
+        headers: { 'X-API-Key': API_KEY }
+      });
       // We don't alert anymore, the button state changes
       setTimeout(() => {
         setScrapingPortals(prev => ({ ...prev, [portal]: false }));

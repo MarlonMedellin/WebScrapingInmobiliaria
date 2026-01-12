@@ -25,12 +25,12 @@ class SavedSearchOut(BaseModel):
     name: str
     criteria: dict
     
-# CORS
-origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "*" # For dev simplicity
-]
+import os
+
+# CORS Configuration
+# Important: allow_origins cannot be ["*"] when allow_credentials is True
+allowed_origins_raw = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
+origins = [o.strip() for o in allowed_origins_raw.split(",")]
 
 app.add_middleware(
     CORSMiddleware,
@@ -39,6 +39,22 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# API Key Security
+from fastapi.security.api_key import APIKeyHeader
+from fastapi import Security
+
+API_KEY_NAME = "X-API-Key"
+API_KEY = os.getenv("API_KEY", "dev-secret-key")
+api_key_header = APIKeyHeader(name=API_KEY_NAME, auto_error=False)
+
+async def get_api_key(header_value: str = Security(api_key_header)):
+    if header_value == API_KEY:
+        return header_value
+    raise HTTPException(
+        status_code=403, 
+        detail="Could not validate credentials. Please provide a valid X-API-Key header."
+    )
 
 @app.get("/")
 def read_root():
@@ -144,7 +160,12 @@ def get_discovered_neighborhoods():
         return []
 
 @app.put("/properties/{property_id}/status")
-def update_property_status(property_id: int, status_update: PropertyStatusUpdate, db: Session = Depends(get_db)):
+def update_property_status(
+    property_id: int, 
+    status_update: PropertyStatusUpdate, 
+    db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key)
+):
     prop = db.query(Property).filter(Property.id == property_id).first()
     if not prop:
         raise HTTPException(status_code=404, detail="Property not found")
@@ -174,7 +195,11 @@ def get_searches(db: Session = Depends(get_db)):
     return results
 
 @app.post("/searches")
-def create_search(search: SavedSearchCreate, db: Session = Depends(get_db)):
+def create_search(
+    search: SavedSearchCreate, 
+    db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key)
+):
     criteria_json = json.dumps(search.criteria)
     db_search = SavedSearch(name=search.name, criteria=criteria_json)
     db.add(db_search)
@@ -183,7 +208,11 @@ def create_search(search: SavedSearchCreate, db: Session = Depends(get_db)):
     return {"id": db_search.id, "message": "Search saved"}
 
 @app.delete("/searches/{search_id}")
-def delete_search(search_id: int, db: Session = Depends(get_db)):
+def delete_search(
+    search_id: int, 
+    db: Session = Depends(get_db),
+    api_key: str = Depends(get_api_key)
+):
     db_search = db.query(SavedSearch).filter(SavedSearch.id == search_id).first()
     if not db_search:
         raise HTTPException(status_code=404, detail="Search not found")
@@ -192,9 +221,12 @@ def delete_search(search_id: int, db: Session = Depends(get_db)):
     return {"message": "Search deleted"}
 
 @app.post("/scrape/{portal_key}")
-def trigger_scrape(portal_key: str):
+def trigger_scrape(
+    portal_key: str,
+    api_key: str = Depends(get_api_key)
+):
     # Valid portals
-    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal", "escalainmobiliaria"]
+    valid_portals = ["fincaraiz", "elcastillo", "santafe", "panda", "integridad", "protebienes", "lacastellana", "monserrate", "aportal", "escalainmobiliaria", "suvivienda"]
     if portal_key not in valid_portals:
 
         raise HTTPException(status_code=400, detail="Portal not supported")

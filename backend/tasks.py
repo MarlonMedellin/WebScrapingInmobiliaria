@@ -4,6 +4,7 @@ from celery import shared_task
 from database import SessionLocal
 from scrapers.factory import ScraperFactory
 from core.worker import celery_app
+from crud import archive_stale_properties
 
 logger = logging.getLogger(__name__)
 
@@ -51,3 +52,17 @@ def scrape_all_task():
         scrape_portal_task.delay(p)
         
     return f"Triggered scraping for {portals}"
+
+@celery_app.task(name="cleanup_stale_properties")
+def cleanup_stale_properties_task(days: int = 3):
+    logger.info(f"Starting cleanup of stale properties (older than {days} days)")
+    db = SessionLocal()
+    try:
+        count = archive_stale_properties(db, days=days)
+        logger.info(f"Archived {count} stale properties")
+        return f"Archived {count} properties"
+    except Exception as e:
+        logger.error(f"Error in cleanup task: {e}")
+        raise e
+    finally:
+        db.close()

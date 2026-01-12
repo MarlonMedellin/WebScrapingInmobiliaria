@@ -78,22 +78,33 @@ class BaseScraper(ABC):
             return "skipped"
         # -----------------------------------
 
-        existing = get_property_by_link(self.db, link)
-        
-        if existing:
-            update_property_last_seen(self.db, existing)
-            # Update price if changed
-            if existing.price != data["price"]:
-                update_property_price(self.db, existing, data["price"])
-                logger.info(f"[{self.portal_name}] Updated Price: {link}")
-                return "updated"
+        # --- DB Persist (Async-safe) ---
+        # Moving synchronous DB calls to a separate thread to avoid blocking the event loop
+        def persist_db():
+            existing = get_property_by_link(self.db, link)
+            
+            if existing:
+                update_property_last_seen(self.db, existing)
+                # Update price if changed
+                if existing.price != data["price"]:
+                    update_property_price(self.db, existing, data["price"])
+                    return "updated"
+                else:
+                    return "existing"
             else:
-                logger.info(f"[{self.portal_name}] Seen (No Change): {link}")
-                return "existing"
-        else:
-            create_property(self.db, data)
+                create_property(self.db, data)
+                return "new"
+
+        status = await asyncio.to_thread(persist_db)
+        
+        if status == "updated":
+            logger.info(f"[{self.portal_name}] Updated Price: {link}")
+        elif status == "existing":
+            logger.info(f"[{self.portal_name}] Seen (No Change): {link}")
+        elif status == "new":
             logger.info(f"[{self.portal_name}] Created: {link}")
-            return "new"
+            
+        return status
 
     def should_stop_scraping(self, consecutive_existing: int, max_consecutive: int = 10) -> bool:
         """
