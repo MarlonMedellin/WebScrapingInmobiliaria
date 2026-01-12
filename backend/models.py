@@ -29,6 +29,9 @@ class Property(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     last_seen = Column(DateTime(timezone=True), server_default=func.now())
+    
+    # New V4 field: Date published on the external portal (if available)
+    portal_published_date = Column(DateTime(timezone=True), nullable=True)
 
     def __repr__(self):
         return f"<Property(id={self.id}, title={self.title}, price={self.price}, status={self.status})>"

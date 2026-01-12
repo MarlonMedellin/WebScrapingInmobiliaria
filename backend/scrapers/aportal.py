@@ -3,6 +3,7 @@ from .base import BaseScraper
 import logging
 import re
 
+from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class AportalScraper(BaseScraper):
@@ -21,6 +22,8 @@ class AportalScraper(BaseScraper):
             cards = soup.select(".properties")
             logger.info(f"[{self.portal_name}] Found {len(cards)} properties")
             
+            consecutive_existing = 0
+
             for card in cards:
                 try:
                     # Skip if "No Disponible"
@@ -58,7 +61,7 @@ class AportalScraper(BaseScraper):
                     # This site doesn't show area/rooms in the card list (only detail page)
                     # For now, following Phase 1/2 style of extraction from list.
                     
-                    await self.process_property({
+                    status = await self.process_property({
                         "title": title,
                         "price": price,
                         "location": location,
@@ -66,6 +69,16 @@ class AportalScraper(BaseScraper):
                         "image_url": image_url,
                         "source": self.portal_name
                     })
+
+                    # Stop logic
+                    if status == "existing":
+                        consecutive_existing += 1
+                    elif status == "new" or status == "updated":
+                        consecutive_existing = 0
+                    
+                    if self.should_stop_scraping(consecutive_existing):
+                        break
+
                 except Exception as e:
                     logger.error(f"[{self.portal_name}] Error parsing card: {e}")
                     continue

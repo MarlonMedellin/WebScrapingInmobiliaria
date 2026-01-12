@@ -3,6 +3,7 @@ from .base import BaseScraper
 import logging
 import re
 
+from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class IntegridadScraper(BaseScraper):
@@ -21,6 +22,8 @@ class IntegridadScraper(BaseScraper):
             cards = soup.select(".property_item")
             logger.info(f"[{self.portal_name}] Found {len(cards)} properties")
             
+            consecutive_existing = 0
+
             for card in cards:
                 try:
                     # Title and Link
@@ -66,7 +69,7 @@ class IntegridadScraper(BaseScraper):
                             if num_match:
                                 bedrooms = int(num_match.group(1))
 
-                    await self.process_property({
+                    status = await self.process_property({
                         "title": title,
                         "price": price,
                         "location": location,
@@ -76,6 +79,16 @@ class IntegridadScraper(BaseScraper):
                         "bedrooms": bedrooms,
                         "source": self.portal_name
                     })
+
+                    # Stop logic
+                    if status == "existing":
+                        consecutive_existing += 1
+                    elif status == "new" or status == "updated":
+                        consecutive_existing = 0
+                    
+                    if self.should_stop_scraping(consecutive_existing):
+                        break
+
                 except Exception as e:
                     logger.error(f"[{self.portal_name}] Error parsing card: {e}")
                     continue

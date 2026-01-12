@@ -11,7 +11,10 @@ from database import SessionLocal
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-SEARCH_URL = "https://www.arrendamientoselcastillo.com.co/resultados?gestion=Arriendo"
+from .config import SEARCH_CRITERIA
+
+# Note: Investigating filtering capabilities. Using generic Arriendo filter + Price if supported.
+# If not supported, BaseScraper logic (Phase 5) will handle exclusion.
 
 class ElCastilloScraper(BaseScraper):
     def __init__(self, db: Session):
@@ -20,7 +23,17 @@ class ElCastilloScraper(BaseScraper):
 
     async def scrape(self):
         try:
-            await self.navigate(SEARCH_URL)
+            # Construct URL with price if possible. 
+            # Trying standard param approach just in case, otherwise fallback specific
+            # URL: .../resultados?gestion=Arriendo
+            max_price = SEARCH_CRITERIA["max_price"]
+            # Adding generic params often seen in software used by them (Simi/Wasi?)
+            # Actually El Castillo looks custom or specific template.
+            # We'll use the base Arriendo url and rely on Python filtering for now to be safe,
+            # as adding wrong params might break results.
+            url = "https://www.arrendamientoselcastillo.com.co/resultados?gestion=Arriendo"
+            
+            await self.navigate(url)
             
             try:
                 await self.page.wait_for_selector("div.estate_itm", timeout=15000)
@@ -30,7 +43,8 @@ class ElCastilloScraper(BaseScraper):
                 return
 
             # Scroll to load (simple scroll)
-            for _ in range(3):
+            scrolls = SEARCH_CRITERIA.get("scroll_depth", 10)
+            for _ in range(scrolls):
                 await self.page.mouse.wheel(0, 1000)
                 await asyncio.sleep(1)
 
@@ -38,6 +52,8 @@ class ElCastilloScraper(BaseScraper):
             logger.info(f"Found {len(cards)} listings")
 
             count = 0
+            consecutive_existing = 0
+
             for i, card in enumerate(cards):
                 try:
                     # Link
@@ -62,7 +78,7 @@ class ElCastilloScraper(BaseScraper):
                         if len(parts) > 1:
                             location_text = parts[-1].strip()
 
-                    await self.process_property({
+                    status = await self.process_property({
                         "title": title_text.strip() if title_text else "No Title",
                         "price": price,
                         "location": location_text,
@@ -70,6 +86,16 @@ class ElCastilloScraper(BaseScraper):
                         "source": self.portal_name
                     })
                     count += 1
+                    
+                    # Stop logic
+                    if status == "existing":
+                        consecutive_existing += 1
+                    elif status == "new" or status == "updated":
+                        consecutive_existing = 0
+                    
+                    if self.should_stop_scraping(consecutive_existing):
+                        break
+
                 except Exception as e:
                     logger.error(f"Error parsing card {i}: {e}")
                     continue

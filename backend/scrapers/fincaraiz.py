@@ -11,7 +11,16 @@ from database import SessionLocal
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-SEARCH_URL = "https://www.fincaraiz.com.co/venta/apartamentos/medellin"
+from .config import SEARCH_CRITERIA
+
+# Mapping of config neighborhoods to Fincaraiz URL slugs
+SLUGS = {
+    "santa fe": "santa-fe",
+    "san pablo": "san-pablo",
+    "campo amor": "campo-amor",
+    "santafe": "santa-fe",
+    "santa fé": "santa-fe"
+}
 
 class FincaRaizScraper(BaseScraper):
     def __init__(self, db: Session):
@@ -20,30 +29,44 @@ class FincaRaizScraper(BaseScraper):
 
     async def scrape(self):
         try:
-            await self.navigate(SEARCH_URL)
+            # FIXED: Use explicit Arriendo URL to avoid mixing Venta results
+            # We'll scrape the general Arriendo page for Medellin with price filter
+            base_url = "https://www.fincaraiz.com.co/arriendo/apartamentos-casas-apartaestudios/medellin"
+            max_price = SEARCH_CRITERIA["max_price"]
+            
+            # Single URL with price filter - let base.py filter by zone
+            search_url = f"{base_url}?precioHasta={max_price}"
+            logger.info(f"[{self.portal_name}] Scraping: {search_url}")
+            
+            await self._scrape_single_url(search_url)
+
+        finally:
+            await self.close_browser()
+
+    async def _scrape_single_url(self, url):
+        try:
+            await self.navigate(url)
             
             # Wait for content to load
             try:
-                # Wait for at least one article or card
-                await self.page.wait_for_selector("div.listingCard", timeout=15000)
+                await self.page.wait_for_selector("div.listingCard", timeout=10000)
             except Exception as e:
-                logger.error("Timeout waiting for content. Dumping HTML...")
-                await self.dump_html()
+                logger.warning(f"[{self.portal_name}] No content found for {url}")
                 return
 
-            # Scroll down to load more items (infinite scroll handling - basic)
-            for _ in range(3):
-                await self.page.mouse.wheel(0, 500)
+            # Scroll to load more items
+            scrolls = SEARCH_CRITERIA.get("scroll_depth", 3)
+            for _ in range(scrolls):
+                await self.page.mouse.wheel(0, 1000)
                 await asyncio.sleep(1)
 
             # Extract Items
             cards = await self.page.locator("div.listingCard").all()
             
-            logger.info(f"Found {len(cards)} listings")
-
-            if len(cards) == 0:
-                await self.dump_html()
+            logger.info(f"[{self.portal_name}] Found {len(cards)} listings")
             
+            consecutive_existing = 0
+
             for i, card in enumerate(cards):
                 try:
                     # LINK
@@ -63,20 +86,29 @@ class FincaRaizScraper(BaseScraper):
                     # LOCATION
                     location_text = await card.locator("strong.lc-location").first.text_content()
 
-                    # Process Data
-                    await self.process_property({
+                    # Process Data - base.py will filter by price and zone
+                    status = await self.process_property({
                         "title": title_text.strip() if title_text else "No Title",
                         "price": price,
-                        "location": location_text.strip() if location_text else "Medellin",
+                        "location": location_text.strip() if location_text else "Medellín",
                         "link": full_link,
                         "source": self.portal_name
                     })
 
+                    # Stop logic
+                    if status == "existing":
+                        consecutive_existing += 1
+                    elif status == "new" or status == "updated":
+                        consecutive_existing = 0
+                    
+                    if self.should_stop_scraping(consecutive_existing):
+                        break
+
                 except Exception as e:
                     logger.error(f"Error parsing card {i}: {e}")
                     continue
-        finally:
-            await self.close_browser()
+        except Exception as e:
+            logger.error(f"Error scraping url {url}: {e}")
 
 def run_scraper_manual():
     db = SessionLocal()
@@ -86,4 +118,3 @@ def run_scraper_manual():
 
 if __name__ == "__main__":
     run_scraper_manual()
-

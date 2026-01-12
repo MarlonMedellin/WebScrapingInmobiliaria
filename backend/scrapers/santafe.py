@@ -5,6 +5,7 @@ from .base import BaseScraper
 import logging
 import re
 
+from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class SantaFeScraper(BaseScraper):
@@ -35,6 +36,8 @@ class SantaFeScraper(BaseScraper):
         logger.info(f"Found {len(cards)} properties on {url}")
         
         count = 0
+        consecutive_existing = 0
+
         for card in cards:
             try:
                 # Link and ID
@@ -82,19 +85,29 @@ class SantaFeScraper(BaseScraper):
                 detail_prop = body.select_one(".detail-prop")
                 if detail_prop:
                     # Alcobas
-                    alcobas_span = detail_prop.select_one(".alcobas")
-                    if alcobas_span:
-                        bedrooms_text = alcobas_span.get_text(strip=True)
-                        bedrooms = int(bedrooms_text) if bedrooms_text.isdigit() else 0
-                        
+                    # Sometimes it's a span or div with class 'alcobas' or inside an li
+                    bedroom_nodes = detail_prop.select("span, div, li")
+                    for node in bedroom_nodes:
+                        txt = node.get_text(strip=True).lower()
+                        if "alcoba" in txt or "habitacion" in txt:
+                            match = re.search(r'(\d+)', txt)
+                            if match:
+                                bedrooms = int(match.group(1))
+                                break
+                    
                     # Area
-                    area_span = detail_prop.select_one(".area")
-                    if area_span:
-                        area_text = area_span.get_text(strip=True).replace("m2", "").replace("m²", "")
-                        try:
-                            area = float(area_text)
-                        except ValueError:
-                            area = 0
+                    for node in bedroom_nodes:
+                        txt = node.get_text(strip=True).lower()
+                        if "m2" in txt or "m²" in txt or "area" in txt:
+                             match = re.search(r'([\d.,]+)', txt)
+                             if match:
+                                 try:
+                                     # normalize '50,5' to 50.5 if needed, though usually just ints
+                                     val_str = match.group(1).replace(',', '.')
+                                     area = float(val_str)
+                                 except:
+                                     pass
+                                 break
 
                 title = f"{property_type} en {location}"
                 
@@ -109,8 +122,17 @@ class SantaFeScraper(BaseScraper):
                     "bedrooms": bedrooms
                 }
                 
-                await self.process_property(entry)
+                status = await self.process_property(entry)
                 count += 1
+                
+                # Stop logic
+                if status == "existing":
+                    consecutive_existing += 1
+                elif status == "new" or status == "updated":
+                    consecutive_existing = 0
+                
+                if self.should_stop_scraping(consecutive_existing):
+                    break
                 
             except Exception as e:
                 logger.error(f"Error parsing card: {e}")

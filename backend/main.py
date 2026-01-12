@@ -93,7 +93,21 @@ def get_properties(
     # Order by status logic (NEW first), then date
     # Ideally: NEW/SEEN -> Date
     properties = query.order_by(Property.created_at.desc()).offset(skip).limit(limit).all()
-    return properties
+    
+    # Enrich with days_active
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    
+    results = []
+    for p in properties:
+        # Convert to dict to append extra field (or use Pydantic model with property)
+        # For simplicity in this direct return, we'll cast to dict if SqlAlchemy doesn't interfere
+        # Or better, just let the frontend handle the calculation if created_at is sent?
+        # User explicitly asked for a column/indicator. Let's send it computed.
+        p.days_active = (now - p.created_at).days if p.created_at else 0
+        results.append(p)
+        
+    return results
 
 @app.put("/properties/{property_id}/status")
 def update_property_status(property_id: int, status_update: PropertyStatusUpdate, db: Session = Depends(get_db)):

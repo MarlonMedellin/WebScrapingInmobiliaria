@@ -41,12 +41,28 @@ const PropertiesTable = ({ properties, onStatusChange, onSelectProperty }) => {
                         <th>Área</th>
                         <th>Alcobas</th>
                         <th>Precio</th>
+                        <th>Días</th>
                         <th>Acción</th>
                     </tr>
                 </thead>
                 <tbody>
                     {properties.map((prop) => {
                         const isArchived = prop.status === 'ARCHIVED';
+
+                        const getDaysBadge = (days) => {
+                            const d = days || 0;
+                            let cls = 'badge-days-old';
+                            let text = `${d}d`;
+                            if (d <= 3) {
+                                cls = 'badge-days-new';
+                                text = 'Nuevo';
+                            } else if (d <= 7) {
+                                cls = 'badge-days-recent';
+                                text = `${d}d`;
+                            }
+                            return <span className={`badge-days ${cls}`}>{text}</span>;
+                        };
+
                         return (
                             <tr key={prop.id} className={isArchived ? 'archived-row' : ''}>
                                 <td>{getSourceBadge(prop.source)}</td>
@@ -62,6 +78,7 @@ const PropertiesTable = ({ properties, onStatusChange, onSelectProperty }) => {
                                 <td>{prop.area ? `${prop.area} m²` : '--'}</td>
                                 <td>{prop.bedrooms || '--'}</td>
                                 <td className="price-tag">{formatPrice(prop.price)}</td>
+                                <td>{getDaysBadge(prop.days_active)}</td>
                                 <td>
                                     <div className="action-row">
                                         <a

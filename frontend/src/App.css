@@ -322,3 +322,37 @@ button.action-btn.secondary {
   color: var(--accent);
   text-decoration: underline;
 }
+
+/* Days Badges using Tailwind-like colors */
+.badge-days {
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  display: inline-block;
+  min-width: 30px;
+  text-align: center;
+}
+
+.badge-days-new {
+  background: rgba(34, 197, 94, 0.2);
+  /* Green 500 equivalent alpha */
+  color: #4ade80;
+  /* Green 400 */
+  border: 1px solid rgba(74, 222, 128, 0.3);
+}
+
+.badge-days-recent {
+  background: rgba(234, 179, 8, 0.2);
+  /* Yellow 500 equivalent alpha */
+  color: #facc15;
+  /* Yellow 400 */
+  border: 1px solid rgba(250, 204, 21, 0.3);
+}
+
+.badge-days-old {
+  background: rgba(148, 163, 184, 0.2);
+  /* Slate 400 */
+  color: #94a3b8;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+}

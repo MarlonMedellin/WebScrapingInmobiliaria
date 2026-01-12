@@ -9,6 +9,8 @@ from crud import create_property, get_property_by_link, update_property_last_see
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+from .config import SEARCH_CRITERIA, should_include_property
+
 class BaseScraper(ABC):
     def __init__(self, db: Session):
         self.db = db
@@ -47,15 +49,34 @@ class BaseScraper(ABC):
         """Main scraping logic to be implemented by subclasses."""
         pass
 
-    async def process_property(self, data: dict):
+    async def process_property(self, data: dict) -> str:
         """
         Standard logic to save or update a property.
         'data' dictionary must contain: title, price, location, link
+        
+        Returns:
+            str: 'new', 'updated', 'existing', or 'skipped'
         """
         link = data["link"]
+        title = data.get("title", "")
+        location = data.get("location", "")
+        price = data.get("price", 0)
+
         # Ensure source is set
         if "source" not in data:
             data["source"] = self.portal_name
+
+        # --- PHASE 5: Pre-Save Filtering ---
+        # 1. Price Check
+        if price > SEARCH_CRITERIA["max_price"]:
+            logger.debug(f"[{self.portal_name}] Skipped (Price > {SEARCH_CRITERIA['max_price']}): {price} - {link}")
+            return "skipped"
+
+        # 2. Location/Zone Check
+        if not should_include_property(title, location):
+            logger.debug(f"[{self.portal_name}] Skipped (Zone not matched): {title} | {location} - {link}")
+            return "skipped"
+        # -----------------------------------
 
         existing = get_property_by_link(self.db, link)
         
@@ -65,11 +86,23 @@ class BaseScraper(ABC):
             if existing.price != data["price"]:
                 update_property_price(self.db, existing, data["price"])
                 logger.info(f"[{self.portal_name}] Updated Price: {link}")
+                return "updated"
             else:
                 logger.info(f"[{self.portal_name}] Seen (No Change): {link}")
+                return "existing"
         else:
             create_property(self.db, data)
             logger.info(f"[{self.portal_name}] Created: {link}")
+            return "new"
+
+    def should_stop_scraping(self, consecutive_existing: int, max_consecutive: int = 10) -> bool:
+        """
+        Check if we should stop scraping based on consecutive existing items.
+        """
+        if consecutive_existing >= max_consecutive:
+            logger.info(f"[{self.portal_name}] Stopping: Found {consecutive_existing} consecutive existing items.")
+            return True
+        return False
 
     async def dump_html(self, page: Page = None, prefix: str = "debug"):
         """Helper to save HTML for debugging."""

@@ -5,6 +5,8 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+from .config import SEARCH_CRITERIA
+
 class PandaScraper(BaseScraper):
     def __init__(self, db: Session):
         super().__init__(db)
@@ -14,6 +16,7 @@ class PandaScraper(BaseScraper):
     async def scrape(self):
         try:
             # Operacion 2 normally means Arriendo
+            # We assume filtering by price in URL is risky without doc, relying on Phase 5
             url = f"{self.base_url}/inmuebles?operacion=2" 
             await self._scrape_url(url)
         finally:
@@ -31,6 +34,8 @@ class PandaScraper(BaseScraper):
         logger.info(f"Found {len(cards)} properties on Panda")
         
         count = 0
+        consecutive_existing = 0
+
         for card in cards:
             try:
                 # Extract data attributes
@@ -78,8 +83,17 @@ class PandaScraper(BaseScraper):
                     # "bathrooms": bathrooms # Model might not have this yet, check Property model
                 }
                 
-                await self.process_property(entry)
+                status = await self.process_property(entry)
                 count += 1
+                
+                # Stop logic
+                if status == "existing":
+                    consecutive_existing += 1
+                elif status == "new" or status == "updated":
+                    consecutive_existing = 0
+                
+                if self.should_stop_scraping(consecutive_existing):
+                    break
                 
             except Exception as e:
                 logger.error(f"Error parsing Panda card: {e}")
