@@ -10,16 +10,28 @@ const FiltersBar = ({ onFilterChange, portals }) => {
         max_price: '',
         min_area: '',
         max_area: '',
+        neighborhood: '',
         show_archived: false
     });
 
     const [savedSearches, setSavedSearches] = useState([]);
+    const [neighborhoods, setNeighborhoods] = useState({});
     const [searchName, setSearchName] = useState('');
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
         loadSavedSearches();
+        loadNeighborhoods();
     }, []);
+
+    const loadNeighborhoods = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/neighborhoods`);
+            if (res.ok) setNeighborhoods(await res.json());
+        } catch (e) {
+            console.error("Error loading neighborhoods", e);
+        }
+    };
 
     const loadSavedSearches = async () => {
         try {
@@ -51,6 +63,7 @@ const FiltersBar = ({ onFilterChange, portals }) => {
             max_price: '',
             min_area: '',
             max_area: '',
+            neighborhood: '',
             show_archived: false
         };
         setFilters(resetState);
@@ -122,6 +135,15 @@ const FiltersBar = ({ onFilterChange, portals }) => {
                         <option value="">Todos los Portales</option>
                         {portals.map(p => (
                             <option key={p} value={p}>{p}</option>
+                        ))}
+                    </select>
+                </div>
+
+                <div className="filter-group">
+                    <select name="neighborhood" value={filters.neighborhood} onChange={handleChange} className="filter-select">
+                        <option value="">Todos los Barrios</option>
+                        {Object.keys(neighborhoods).map(nb => (
+                            <option key={nb} value={nb}>{nb}</option>
                         ))}
                     </select>
                 </div>

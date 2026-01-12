@@ -33,6 +33,7 @@ function App() {
       if (filters.max_price) params.append('max_price', filters.max_price);
       if (filters.min_area) params.append('min_area', filters.min_area);
       if (filters.max_area) params.append('max_area', filters.max_area);
+      if (filters.neighborhood) params.append('neighborhood', filters.neighborhood);
       if (filters.show_archived) params.append('show_archived', 'true');
 
       const response = await fetch(`${API_BASE_URL}/properties?${params.toString()}`);

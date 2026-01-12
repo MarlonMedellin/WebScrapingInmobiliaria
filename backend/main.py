@@ -54,6 +54,7 @@ def get_properties(
     min_area: Optional[float] = None,
     max_area: Optional[float] = None,
     search: Optional[str] = None,
+    neighborhood: Optional[str] = None,
     show_archived: bool = False,
     db: Session = Depends(get_db)
 ):
@@ -79,7 +80,22 @@ def get_properties(
     if max_area is not None:
         query = query.filter(Property.area <= max_area)
 
-    # 4. Text Search (Title or Location)
+    # 4. Neighborhood Mapping Filter
+    if neighborhood:
+        # Cargar mapeo
+        map_path = "neighborhood_map.json"
+        try:
+            with open(map_path, "r", encoding="utf-8") as f:
+                nb_map = json.load(f)
+            
+            variants = nb_map.get(neighborhood, [neighborhood])
+            # Crear filtros OR para cada variante
+            nb_filters = [Property.location.ilike(f"%{v}%") for v in variants]
+            query = query.filter(or_(*nb_filters))
+        except Exception as e:
+            print(f"Error filtering neighborhood: {e}")
+
+    # 5. Text Search (Title or Location)
     if search:
         search_term = f"%{search}%"
         query = query.filter(
@@ -108,6 +124,24 @@ def get_properties(
         results.append(p)
         
     return results
+
+@app.get("/neighborhoods")
+def get_neighborhood_map():
+    """Retorna el mapeo de barrios para el dropdown del frontend."""
+    try:
+        with open("neighborhood_map.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return {}
+
+@app.get("/neighborhoods/discovered")
+def get_discovered_neighborhoods():
+    """Retorna la lista de barrios descubiertos por los scrapers."""
+    try:
+        with open("discovered_neighborhoods.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    except:
+        return []
 
 @app.put("/properties/{property_id}/status")
 def update_property_status(property_id: int, status_update: PropertyStatusUpdate, db: Session = Depends(get_db)):
