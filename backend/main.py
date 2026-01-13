@@ -110,9 +110,12 @@ def get_properties(
             with open(map_path, "r", encoding="utf-8") as f:
                 nb_map = json.load(f)
             
-            variants = nb_map.get(neighborhood, [neighborhood])
-            # Crear filtros OR para cada variante
-            nb_filters = [Property.location.ilike(f"%{v}%") for v in variants]
+            # Crear filtros OR para cada variante buscando tanto en location como en title
+            nb_filters = []
+            for v in variants:
+                nb_filters.append(Property.location.ilike(f"%{v}%"))
+                nb_filters.append(Property.title.ilike(f"%{v}%"))
+            
             query = query.filter(or_(*nb_filters))
         except Exception as e:
             print(f"Error filtering neighborhood: {e}")
