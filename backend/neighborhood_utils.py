@@ -20,8 +20,7 @@ def clean_neighborhood_name(name: str) -> str:
     # 3. Eliminar ruidos comunes
     ruidos = [
         r'\bbarrio\b', r'\bsector\b', r'\bubicacion\b', r'\bmedellin\b', 
-        r'\benvigado\b', r'\bitagui\b', r'\bsabaneta\b', r'\bla estrella\b',
-        r'\bmunicipio\b', r'\bciudad\b', r'\bcomuna\b'
+        r'\bmunicipio\b', r'\bciudad\b', r'\bcomuna\b', r'\bantioquia\b'
     ]
     for ruido in ruidos:
         name = re.sub(ruido, '', name)
