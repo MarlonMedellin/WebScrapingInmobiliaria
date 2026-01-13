@@ -1,6 +1,5 @@
-import os
-import json
 import unicodedata
+from .neighborhood_utils import clean_neighborhood_name, is_neighborhood_in_map
 
 SEARCH_CRITERIA = {
     "operation": "arriendo",
@@ -24,19 +23,37 @@ def normalize_text(text: str) -> str:
 
 def update_discovered_neighborhoods(neighborhood: str):
     """
-    Agrega un nuevo nombre de barrio a la lista de descubrimiento.
+    Agrega un nuevo nombre de barrio a la lista de descubrimiento
+    si no existe ya en el mapa de barrios (normalizado).
     """
     if not neighborhood: return
     
+    # 1. Cargar el mapa de barrios para verificar si ya está mapeado
+    nb_map_path = os.path.join(os.path.dirname(__file__), "..", "neighborhood_map.json")
+    try:
+        with open(nb_map_path, "r", encoding="utf-8") as f:
+            nb_map = json.load(f)
+        
+        # Si el barrio ya está en el mapa (normalizado), no lo agregamos a descubiertos
+        if is_neighborhood_in_map(neighborhood, nb_map):
+            return
+            
+    except Exception as e:
+        print(f"Error cargando mapa de barrios: {e}")
+
+    # 2. Si no está mapeado, proceder con el registro en descubiertos
     file_path = os.path.join(os.path.dirname(__file__), "..", "discovered_neighborhoods.json")
     try:
+        discovered = []
         if os.path.exists(file_path):
             with open(file_path, "r", encoding="utf-8") as f:
-                discovered = json.load(f)
-        else:
-            discovered = []
-            
-        if neighborhood not in discovered:
+                content = f.read().strip()
+                if content:
+                    discovered = json.loads(content)
+        
+        # Normalizar para evitar duplicados en la lista de descubiertos
+        clean_new = clean_neighborhood_name(neighborhood)
+        if not any(clean_neighborhood_name(d) == clean_new for d in discovered):
             discovered.append(neighborhood)
             with open(file_path, "w", encoding="utf-8") as f:
                 json.dump(discovered, f, indent=2, ensure_ascii=False)
