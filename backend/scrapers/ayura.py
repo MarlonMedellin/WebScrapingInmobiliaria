@@ -30,7 +30,7 @@ class AyuraScraper(BaseScraper):
         page_num = 1
         consecutive_existing = 0
         
-        while page_num <= 20:  # Límite de seguridad de páginas
+        while page_num <= self.max_pages:  # Límite dinámico (BaseScraper defaults to 20 or seed overrides)
             # catalog_iku5 es el parámetro de paginación
             current_url = f"{base_url}&catalog_iku5={page_num}" if page_num > 1 else base_url
             logger.info(f"[{self.portal_name}] Explorando página {page_num}: {current_url}")

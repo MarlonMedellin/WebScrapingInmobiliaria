@@ -15,6 +15,10 @@ class BaseScraper(ABC):
     def __init__(self, db: Session):
         self.db = db
         self.portal_name = "generic" # Should be overwritten
+        # Local Deep Scrape Configuration
+        self.seed_mode = False
+        self.max_pages = 20 # Default limit, overridden in seed_mode
+        
         self.browser: Browser = None
         self.context: BrowserContext = None
         self.page: Page = None
@@ -42,7 +46,18 @@ class BaseScraper(ABC):
             await self.init_browser()
         
         logger.info(f"[{self.portal_name}] Navigating to {url}")
-        await self.page.goto(url, wait_until=wait_until, timeout=60000)
+        try:
+            await self.page.goto(url, wait_until=wait_until, timeout=60000)
+        except Exception as e:
+            if self.seed_mode:
+                logger.error(f"[{self.portal_name}] Navigation failed (Block/Timeout): {e}")
+                print(f"\n[!!!] BLOCK DETECTED or TIMEOUT extracting {url}")
+                print(">>> Please CHANGE YOUR VPN IP now.")
+                input(">>> Press ENTER to retry...")
+                # Retry once recursively
+                await self.navigate(url, wait_until)
+            else:
+                raise e
 
     @abstractmethod
     async def scrape(self):
@@ -110,6 +125,10 @@ class BaseScraper(ABC):
         """
         Check if we should stop scraping based on consecutive existing items.
         """
+        if self.seed_mode:
+            logger.debug(f"[{self.portal_name}] Seed Mode: Ignoring consecutive existing limit ({consecutive_existing}).")
+            return False
+
         if consecutive_existing >= max_consecutive:
             logger.info(f"[{self.portal_name}] Stopping: Found {consecutive_existing} consecutive existing items.")
             return True

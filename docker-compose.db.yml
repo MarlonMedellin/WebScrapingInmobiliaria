@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: local_postgres_dump
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: realestate_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_local_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_local_data:

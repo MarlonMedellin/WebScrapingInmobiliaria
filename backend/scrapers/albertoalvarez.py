@@ -16,7 +16,7 @@ class AlbertoAlvarezScraper(BaseScraper):
     async def scrape(self):
         try:
             # Tipos de inmueble proporcionados por el usuario
-            types = ["apartamento", "apartaestudio", "casa"]
+            types = ["casa"]
             
             for p_type in types:
                 url = f"{self.base_url}/inmuebles/arrendamientos/{p_type}/medellin/"
@@ -30,7 +30,7 @@ class AlbertoAlvarezScraper(BaseScraper):
         page_num = 1
         consecutive_existing = 0
         
-        while page_num <= 15:  # Límite de seguridad
+        while page_num <= self.max_pages:  # Límite dinámico (BaseScraper defaults to 20 or seed overrides)
             current_url = f"{base_url}?pag={page_num}" if page_num > 1 else base_url
             logger.info(f"[{self.portal_name}] Explorando página {page_num}: {current_url}")
             
