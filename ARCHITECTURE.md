@@ -24,12 +24,11 @@ Todos los scrapers heredan de una clase base (`backend/scrapers/base.py`) que es
 - **Procesamiento de Inmuebles:** Lógica base para decidir si un inmueble es nuevo, una actualización de precio o ya existe.
 - **Detección de Parada:** Si encuentra $N$ registros consecutivos ya existentes, detiene el proceso para ahorrar recursos.
 
-### 2. Estrategia de Filtrado Híbrido
-A diferencia de los sistemas tradicionales, este monitor utiliza un enfoque de "Recolección Amplia y Filtrado Inteligente":
+### 2. Estrategia de Mapeo Curado de Alta Precisión
+A diferencia de los sistemas tradicionales, este monitor utiliza un enfoque de "Recolección Amplia y Clasificación Manual":
 - **Nivel de Scraper:** Recolecta todo lo disponible en el Valle de Aburrá (Medellín, Envigado, Itagüí, Sabaneta, La Estrella) para no perder datos por variaciones de texto.
-- **Mapeo de Barrios (`neighborhood_map.json`):** Un archivo de configuración que traduce nombres amigables del frontend a múltiples variantes de nombres usados por las inmobiliarias.
-  - *Ejemplo:* `"Belén": ["belen", "belén rosario", "belen park"]`
-- **Descubrimiento Automático (`discovered_neighborhoods.json`):** El sistema registra automáticamente cualquier nombre de barrio nuevo detectado por los scrapers para posterior mapeo.
+- **Mapeo de Barrios (`neighborhood_map.json`):** Archivo maestro curado manualmente con +200 variantes mapeadas a barrios estándar. Utiliza un orden de precedencia estricto para evitar colisiones entre barrios con nombres similares en diferentes comunas.
+- **Normalización en Base de Datos:** Los inmuebles se procesan mediante `neighborhood_utils.py` para asignar un valor al campo `neighborhood_resolved`, que es el único utilizado para el filtrado en el Dashboard, garantizando precisión absoluta.
 
 ---
 

@@ -5,14 +5,14 @@ Un sistema avanzado de web scraping y monitoreo inmobiliario diseñado para reco
 ## 🌟 Características Principales
 
 ### Scraping de Alta Disponibilidad
-- **10 Portales Integrados:** Fincaraiz, El Castillo, Santa Fe, Panda, Integridad, Protebienes, La Castellana, Monserrate, Aportal y **Escala Inmobiliaria**.
+- **17 Portales Integrados:** Fincaraiz, El Castillo, Santa Fe, Panda, Integridad, Protebienes, La Castellana, Monserrate, Aportal, Escala Inmobiliaria, Su Vivienda, La Aldea, Nutibara, Portofino, Ayura, Alberto Álvarez y **Conquistadores**.
 - **Recolección Masiva:** Captura todas las ofertas residenciales de las ciudades objetivo para garantizar que no se pierda ninguna oportunidad por variaciones en la nomenclatura.
 - **Parada Temprana Inteligente:** Detiene el proceso automáticamente tras detectar 10 registros ya existentes para optimizar el ancho de banda y CPU.
 
-### Nuevo Sistema de Filtrado y Mapeo
-- **Mapeo de Barrios Dinámico:** Centralizado en `neighborhood_map.json`, permite agrupar múltiples alias de barrios bajo un solo nombre estándar.
-- **Descubrimiento Automático:** El sistema "aprende" nuevos nombres de barrios detectados por los scrapers y los registra en `discovered_neighborhoods.json` para auditoría.
-- **Filtros Avanzados en Dashboard:** Filtrado por precio (hasta $5M), área, portal, estado (Nuevo/Archivado) y barrios mapeados.
+### Curación de Alta Precisión y Mapeo
+- **Mapeo de Barrios Manual:** Centralizado en `neighborhood_map.json`, optimizado mediante curación manual de más de 150 barrios para resolver colisiones (ej: San Pablo Comuna 1 vs Comuna 15).
+- **Normalización en DB:** Campo `neighborhood_resolved` para garantizar que los filtros del Dashboard sean 100% precisos.
+- **Filtros Avanzados en Dashboard:** Filtrado por precio (vía slider), área, portal, estado (Nuevo/Archivado) y barrios mapeados con alta precisión.
 
 ### Arquitectura Robusta
 - **Dockerizado:** Entorno consistente para base de datos (PostgreSQL 16), cola de tareas (Redis) y worker.
