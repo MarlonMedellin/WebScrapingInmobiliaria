@@ -1,7 +1,7 @@
 import os
 import json
 import unicodedata
-from ..neighborhood_utils import clean_neighborhood_name, is_neighborhood_in_map, auto_resolve_neighborhood
+from neighborhood_utils import clean_neighborhood_name, is_neighborhood_in_map, auto_resolve_neighborhood
 
 SEARCH_CRITERIA = {
     "operation": "arriendo",
