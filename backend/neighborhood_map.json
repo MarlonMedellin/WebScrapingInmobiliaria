@@ -1,7 +1,11 @@
 {
     "C1 - Popular": [
         "santo domingo",
-        "Santo Domingo"
+        "Santo Domingo",
+        "San Pablo",
+        "Granizal",
+        "san pablo",
+        "granizal"
     ],
     "C3 - Manrique": [
         "manrique",
@@ -19,7 +23,9 @@
         "castilla",
         "barrio girardot",
         "Castilla",
-        "Barrio Girardot"
+        "Barrio Girardot",
+        "Florencia",
+        "florencia"
     ],
     "C6 - Doce de Octubre": [
         "doce de octubre",
@@ -48,7 +54,9 @@
         "Salvador",
         "Caicedo",
         "Milagrosa",
-        "La Asomadera"
+        "La Asomadera",
+        "Enciso",
+        "enciso"
     ],
     "C10 - La Candelaria": [
         "centro",
@@ -63,7 +71,9 @@
         "La Candelaria",
         "Boston",
         "Prado Medellín",
-        "Villa Nueva"
+        "Villa Nueva",
+        "El Chagualo",
+        "el chagualo"
     ],
     "C11 - Laureles - Estadio": [
         "laureles",
@@ -101,7 +111,9 @@
         "La América",
         "Calasanz",
         "Santa Monica",
-        "El Danubio"
+        "El Danubio",
+        "Manzanares",
+        "manzanares"
     ],
     "C13 - San Javier": [
         "san javier",
@@ -236,7 +248,16 @@
         "Loma de las brujas",
         "San rafael",
         "El Campestre La Frontera",
-        "La Frontera  Campestre"
+        "La Frontera  Campestre",
+        "Envigado",
+        "Andalucia",
+        "Chingui",
+        "San mateo",
+        "Las casitas",
+        "Santa elena",
+        "Loma del chocho",
+        "Uribe angel",
+        "Guaimario"
     ],
     "Itagüí": [
         "itagui",
@@ -260,7 +281,8 @@
         "urb. pacifica",
         "Barquereña",
         "Guaimaro",
-        "Calatrava"
+        "Calatrava",
+        "Itagui"
     ],
     "Sabaneta": [
         "sabaneta",
@@ -278,13 +300,16 @@
         "Aves maria",
         "Primavera",
         "Oasis",
-        "Maria auxiliadora"
+        "Maria auxiliadora",
+        "Sabaneta",
+        "El trapiche"
     ],
     "La Estrella": [
         "la estrella",
         "estrella",
         "suramerica",
-        "urb. rivera de suramerica"
+        "urb. rivera de suramerica",
+        "La Estrella"
     ],
     "Otros Municipios": [
         "bello",
