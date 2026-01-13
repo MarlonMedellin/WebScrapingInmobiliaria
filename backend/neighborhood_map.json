@@ -1,5 +1,95 @@
 {
-    "Belén": [
+    "C1 - Popular": [
+        "santo domingo"
+    ],
+    "C3 - Manrique": [
+        "manrique"
+    ],
+    "C4 - Aranjuez": [
+        "aranjuez",
+        "sevilla",
+        "campo valdes"
+    ],
+    "C5 - Castilla": [
+        "castilla",
+        "barrio girardot"
+    ],
+    "C6 - Doce de Octubre": [
+        "doce de octubre"
+    ],
+    "C7 - Robledo": [
+        "robledo",
+        "lopez de mesa",
+        "barrio cordoba"
+    ],
+    "C8 - Villa Hermosa": [
+        "villa hermosa",
+        "los ángeles",
+        "los angeles"
+    ],
+    "C9 - Buenos Aires": [
+        "buenos aires",
+        "salvador",
+        "caicedo",
+        "milagrosa"
+    ],
+    "C10 - La Candelaria": [
+        "centro",
+        "candelaria",
+        "la candelaria",
+        "bomboná",
+        "torres de bombona",
+        "boston",
+        "bostón",
+        "san diego"
+    ],
+    "C11 - Laureles - Estadio": [
+        "laureles",
+        "estadio",
+        "conquistadores",
+        "florida nueva",
+        "san joaquín",
+        "lorena",
+        "los colores",
+        "castellana"
+    ],
+    "C12 - La América": [
+        "calasanz",
+        "calasanz en medellin",
+        "floresta",
+        "la america"
+    ],
+    "C13 - San Javier": [
+        "san javier"
+    ],
+    "C14 - El Poblado": [
+        "poblado",
+        "el poblado",
+        "castropol",
+        "provenza",
+        "ciudad del río",
+        "ciudad del rio",
+        "la loma del indio",
+        "loma del indio",
+        "la aguacatala",
+        "las vegas",
+        "las lomas",
+        "poblado en medellin"
+    ],
+    "C15 - Guayabal": [
+        "guayabal",
+        "guyabal",
+        "santa fe",
+        "santafe",
+        "campo amor",
+        "campoamor",
+        "trinidad",
+        "antioquia",
+        "cristo rey",
+        "la colinita",
+        "santa maría de la paz"
+    ],
+    "C16 - Belén": [
         "belen",
         "belén",
         "belen rosario",
@@ -16,73 +106,17 @@
         "belen las mercedes",
         "rodeo alto",
         "rodeo sur",
-        "rodeo norte"
-    ],
-    "Loma de los Bernal": [
+        "rodeo norte",
         "loma de los bernal",
         "bernal",
         "loma bernal"
     ],
-    "Guayabal": [
-        "guayabal",
-        "guyabal",
-        "santa fe",
-        "santafe",
-        "campo amor",
-        "campoamor",
-        "trinidad",
-        "antioquia",
-        "cristo rey",
-        "la colinita",
-        "santa maría de la paz"
-    ],
-    "El Poblado": [
-        "poblado",
-        "el poblado",
-        "castropol",
-        "provenza",
-        "ciudad del río",
-        "ciudad del rio",
-        "la loma del indio",
-        "loma del indio",
-        "la aguacatala",
-        "las vegas",
-        "las lomas",
-        "san diego",
-        "poblado en medellin"
-    ],
-    "Laureles": [
-        "laureles",
-        "estadio",
-        "conquistadores",
-        "florida nueva",
-        "san joaquín",
-        "lorena"
-    ],
-    "Calasanz": [
-        "calasanz",
-        "calasanz en medellin"
-    ],
-    "Centro": [
-        "centro",
-        "candelaria",
-        "la candelaria",
-        "bomboná"
-    ],
-    "Boston": [
-        "boston",
-        "bostón"
-    ],
-    "Villa Hermosa": [
-        "villa hermosa",
-        "los ángeles",
-        "los angeles"
-    ],
-    "san antonio de prado": [
+    "Corregimientos": [
+        "san cristobal",
         "san antonio de prado",
         "urb arboleda de san antonio",
         "urb. prado verde",
-        "torres de bombona"
+        "san sebastian de palmitas"
     ],
     "Envigado": [
         "envigado",
@@ -95,7 +129,6 @@
         "itagüí",
         "santa maria",
         "ditaires",
-        "centro",
         "la finca",
         "san pio",
         "las acacias",
@@ -127,5 +160,16 @@
         "estrella",
         "suramerica",
         "urb. rivera de suramerica"
+    ],
+    "Otros Municipios": [
+        "bello",
+        "copacabana",
+        "caldas",
+        "guarne",
+        "rionegro",
+        "marinilla",
+        "guatape",
+        "santa fe de antioquia",
+        "san jeronimo"
     ]
 }
