@@ -6,44 +6,45 @@ Este archivo contiene la investigación de nuevos portales para expandir el sist
 
 | Portal | Estado | Notas |
 | :--- | :--- | :--- |
-| Escala Inmobiliaria | ✅ | Implementado y auditado. Sensible a acentos. |
-| Su Vivienda | ✅ | Implementado. Requiere acento en `Medellín` en la URL. |
-| Portofino | ✅ | Implementado. Usa estructura Arrendasoft. |
-| Arrendamientos Nutibara | ⏳ | Pendiente investigación DOM profunda. |
-| Arrendamientos La Aldea | ⏳ | Pendiente. |
-| Arrendamientos Santa Fe | ⏳ | Pendiente. |
-| Arrendamientos Ayurá | ⏳ | Pendiente (Requiere filtrado por código). |
+| Escala Inmobiliaria | ✅ | Implementado. Sensible a acentos. |
+| Su Vivienda | ✅ | Implementado. |
+| Portofino | ✅ | Implementado. Estructura Arrendasoft. |
+| Arrendamientos Nutibara| ✅ | Implementado. Nuxt.js dynamic loading. |
+| Arrendamientos La Aldea| ✅ | Implementado. Paginación con doble slash. |
+| Arrendamientos Santa Fe| ✅ | Implementado. Búsqueda por parámetros. |
+| Arrendamientos Ayurá | ✅ | Implementado. Basado en CMS (cms-field-var). |
+| Arrendamientos Medellín | ⏳ | Por investigar. |
+| Alberto Álvarez | ⏳ | Por investigar. |
+| Conquistadores | ⏳ | Por investigar. |
 
 ---
 
-## 🛠️ Detalles por Portal
+## 🛠️ Detalles Técnicos Recientes
 
-### 1. Escala Inmobiliaria ✅
-- **URL Base:** `https://escalainmobiliaria.com.co/inmuebles/g/arriendo/t/apartamentos/c/medellín/`
+### 4. Arrendamientos Nutibara ✅
+- **URL Base:** `https://anutibara.com/search/apartaestudio-apartamento-casa/arriendo/all`
 - **Paginación:** `?pagina=X`
-- **Selector Card:** `.card.card-space`
-- **Selector Precio:** `h4` (dentro de link title="Valor propiedad")
+- **Selector Card:** `.card-container`
+- **Amenities:** Atributos `title` en imágenes de `.amenity-item`.
 
-### 2. Portofino Propiedad Raíz ✅
-- **URL Base:** `https://portofinopropiedadraiz.com/resultados-de-busqueda/?Servicio=1&TipoInmueble=1247&Municipio=1`
-- **Paginación:** `&Pagina=X` (Estructura Arrendasoft)
-- **Selector Card:** `a[href*="detalle-propiedad"]`
-- **Selector Precio:** `.body .contenedor2 p span.parse-float`
+### 5. Arrendamientos La Aldea ✅
+- **URL Base:** `https://www.arrendamientoslaaldea.com.co/inmuebles/Arriendo/clases_Apartamento_Apto-Loft_Amoblados_Apartaestudio_Casa/`
+- **Paginación:** `//X`
+- **Selector Card:** `.listing-item`
 
-### 3. Su Vivienda ✅
-- **URL Base:** `https://www.suvivienda.com.co/inmuebles/Arriendo/Apartamento/Medellín/`
-- **Paginación:** `/X` (al final de la URL)
-- **Selector Card:** `.property_item`
-- **Selector Precio:** `.favroute2 p`
+### 6. Arrendamientos Santa Fe ✅
+- **URL Base:** `https://arrendamientossantafe.com/propiedades/`
+- **Paginación:** `?page=X`
+- **Selector Card:** `.inner-card`
 
-### 4. Arrendamientos Nutibara ⏳
-- **URL Base:** `https://anutibara.com/search/inmueble/arriendo/medellin`
-- **Paginación:** `?pagina=X`
-- **Notas:** Pendiente validar selectores exactos de características.
+### 7. Arrendamientos Ayurá ✅
+- **URL Base:** `https://www.arrendamientosayura.com/buscar`
+- **Paginación:** `catalog_iku5=X`
+- **Selector:** `[cms-field-var]`
 
 ---
 
-## ⚡ Criterios Globales (Refinados)
-- **Área Geográfica:** Valle de Aburrá extendido (Medellín, Envigado, Itagüí, Sabaneta, La Estrella).
-- **Filtrado:** Broad Scraping + API Mapping (`neighborhood_map.json`).
-- **Precio Máx:** $5,000,000 COP.
+## ⚡ Próximos Pasos Sugeridos
+1. **Auditoría de Calidad:** Verificar que los precios y áreas se estén capturando correctamente en todos los nuevos portales.
+2. **Nuevas Fuentes:** Investigar "Arrendamientos Medellín", "Alberto Álvarez" o "Inmobiliaria Conquistadores".
+3. **Mantenimiento:** Monitorear logs de error en el VPS para detectar cambios de DOM.
