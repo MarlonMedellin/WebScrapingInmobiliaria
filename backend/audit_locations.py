@@ -72,6 +72,7 @@ def run_audit(apply_fixes=False):
             else:
                 stats["unknown"] += 1
                 stats["portals"][p.source]["unknown"] += 1
+                updates.append((p.id, p.title, p.location, "UNKNOWN"))
 
         # Summary Report
         print(f"Summary:")
@@ -83,15 +84,14 @@ def run_audit(apply_fixes=False):
         for portal, p_stats in stats["portals"].items():
             print(f"  {portal:15}: {p_stats['matched']} matched, {p_stats['enrichable']} enrichable, {p_stats['unknown']} unknown (Total: {p_stats['total']})")
 
-        if apply_fixes and updates:
-            db.commit()
-            print(f"\n✅ SUCCESSFULLY UPDATED {len(updates)} RECORDS.")
-        elif updates:
-            print(f"\nPotential Improvements (First 10):")
-            for id, title, old, new in updates[:10]:
-                print(f"  - [ID {id}] '{title}'")
-                print(f"    OLD: {old}")
-                print(f"    NEW: {new}")
+        if not apply_fixes and updates:
+            print(f"\nUnknown / Suggestion Analysis:")
+            for id, title, old, target in updates:
+                if target == "UNKNOWN":
+                    print(f"  - [ID {id}] [{title}] -> Location: {old}")
+                else:
+                    # Enrichable (if any were found in a future run)
+                    print(f"  - [ID {id}] [ENRICH] '{title}' -> New Location: {target}")
 
     except Exception as e:
         print(f"Error during audit: {e}")
