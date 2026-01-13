@@ -1,37 +1,54 @@
 {
     "C1 - Popular": [
-        "santo domingo"
+        "santo domingo",
+        "Santo Domingo"
     ],
     "C3 - Manrique": [
-        "manrique"
+        "manrique",
+        "Manrique"
     ],
     "C4 - Aranjuez": [
         "aranjuez",
         "sevilla",
-        "campo valdes"
+        "campo valdes",
+        "Aranjuez",
+        "Sevilla",
+        "Campo Valdes"
     ],
     "C5 - Castilla": [
         "castilla",
-        "barrio girardot"
+        "barrio girardot",
+        "Castilla",
+        "Barrio Girardot"
     ],
     "C6 - Doce de Octubre": [
-        "doce de octubre"
+        "doce de octubre",
+        "Doce de Octubre"
     ],
     "C7 - Robledo": [
         "robledo",
         "lopez de mesa",
-        "barrio cordoba"
+        "barrio cordoba",
+        "Robledo",
+        "Lopez de Mesa",
+        "Barrio Cordoba"
     ],
     "C8 - Villa Hermosa": [
         "villa hermosa",
         "los ángeles",
-        "los angeles"
+        "los angeles",
+        "Villa Hermosa"
     ],
     "C9 - Buenos Aires": [
         "buenos aires",
         "salvador",
         "caicedo",
-        "milagrosa"
+        "milagrosa",
+        "Buenos Aires",
+        "Salvador",
+        "Caicedo",
+        "Milagrosa",
+        "La Asomadera"
     ],
     "C10 - La Candelaria": [
         "centro",
@@ -41,7 +58,12 @@
         "torres de bombona",
         "boston",
         "bostón",
-        "san diego"
+        "san diego",
+        "San Diego",
+        "La Candelaria",
+        "Boston",
+        "Prado Medellín",
+        "Villa Nueva"
     ],
     "C11 - Laureles - Estadio": [
         "laureles",
@@ -51,16 +73,39 @@
         "san joaquín",
         "lorena",
         "los colores",
-        "castellana"
+        "castellana",
+        "El Velódromo",
+        "Conquistadores",
+        "Estadio",
+        "Laureles Medellín",
+        "La Castellana",
+        "San Joaquín Laureles",
+        "Los Colores",
+        "Florida Nueva",
+        "San Joaquin",
+        "Lorena",
+        "Nueva Villa De Aburrá",
+        "Simón Bolívar Medellín",
+        "Santa Teresita"
     ],
     "C12 - La América": [
         "calasanz",
         "calasanz en medellin",
         "floresta",
-        "la america"
+        "la america",
+        "Barrio Cristóbal",
+        "La Floresta",
+        "Almería",
+        "Santa Mónica",
+        "Calasanz Parte Alta",
+        "La América",
+        "Calasanz",
+        "Santa Monica",
+        "El Danubio"
     ],
     "C13 - San Javier": [
-        "san javier"
+        "san javier",
+        "San Javier"
     ],
     "C14 - El Poblado": [
         "poblado",
@@ -74,7 +119,21 @@
         "la aguacatala",
         "las vegas",
         "las lomas",
-        "poblado en medellin"
+        "poblado en medellin",
+        "Ciudad Del Rio",
+        "Castropol",
+        "Loma Del Indio",
+        "Altos Del Poblado Cola Del Zorro",
+        "Aguacatala",
+        "Santa María De Los Ángeles",
+        "Las Palmas Medellín",
+        "Patio Bonito",
+        "Loma De San Julián",
+        "Lalinde",
+        "El Tesoro",
+        "La Florida El Poblado",
+        "La Visitacion Los Gonzalez",
+        "Milla De Oro"
     ],
     "C15 - Guayabal": [
         "guayabal",
@@ -87,7 +146,10 @@
         "antioquia",
         "cristo rey",
         "la colinita",
-        "santa maría de la paz"
+        "santa maría de la paz",
+        "Guayabal",
+        "Cristo Rey",
+        "La Colina"
     ],
     "C16 - Belén": [
         "belen",
@@ -109,14 +171,31 @@
         "rodeo norte",
         "loma de los bernal",
         "bernal",
-        "loma bernal"
+        "loma bernal",
+        "La Loma De Los Bernal",
+        "La Palma",
+        "Belén",
+        "Belen",
+        "Las Playas",
+        "El Nogal  Los Almendros",
+        "La Mota",
+        "Rosales",
+        "Fátima Medellín",
+        "Rodeo Alto",
+        "Los Alpes",
+        "Belén Porvenir",
+        "Miravalle",
+        "Granada"
     ],
     "Corregimientos": [
         "san cristobal",
         "san antonio de prado",
         "urb arboleda de san antonio",
         "urb. prado verde",
-        "san sebastian de palmitas"
+        "san sebastian de palmitas",
+        "San Cristobal",
+        "San Antonio De Prado",
+        "San Sebastian de Palmitas"
     ],
     "Envigado": [
         "envigado",
@@ -153,7 +232,9 @@
         "Loma de cumbres",
         "El salado",
         "Loma de las brujas",
-        "San rafael"
+        "San rafael",
+        "El Campestre La Frontera",
+        "La Frontera  Campestre"
     ],
     "Itagüí": [
         "itagui",
@@ -176,7 +257,8 @@
         "asturias",
         "urb. pacifica",
         "Barquereña",
-        "Guaimaro"
+        "Guaimaro",
+        "Calatrava"
     ],
     "Sabaneta": [
         "sabaneta",
@@ -211,6 +293,14 @@
         "marinilla",
         "guatape",
         "santa fe de antioquia",
-        "san jeronimo"
+        "san jeronimo",
+        "Bello",
+        "Copacabana",
+        "Guatape",
+        "Caldas",
+        "Rionegro",
+        "Guarne",
+        "Marinilla",
+        "Santa Fe de Antioquia"
     ]
 }
