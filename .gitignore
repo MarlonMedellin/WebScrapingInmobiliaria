@@ -180,3 +180,6 @@ site/
 secrets/
 credentials/
 .secrets/
+
+# Project Reports
+backend/raw_locations_for_curation.*
