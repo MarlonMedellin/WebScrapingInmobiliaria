@@ -85,13 +85,19 @@ def run_audit(apply_fixes=False):
             print(f"  {portal:15}: {p_stats['matched']} matched, {p_stats['enrichable']} enrichable, {p_stats['unknown']} unknown (Total: {p_stats['total']})")
 
         if not apply_fixes and updates:
-            print(f"\nUnknown / Suggestion Analysis:")
+            print(f"\nUnique Unknown Locations Found ({stats['unknown']} total):")
+            unique_unknowns = set()
             for id, title, old, target in updates:
                 if target == "UNKNOWN":
-                    print(f"  - [ID {id}] [{title}] -> Location: {old}")
-                else:
-                    # Enrichable (if any were found in a future run)
-                    print(f"  - [ID {id}] [ENRICH] '{title}' -> New Location: {target}")
+                    unique_unknowns.add(old)
+            
+            for loc in sorted(list(unique_unknowns)):
+                print(f"  - {loc}")
+
+            print(f"\nEnrichable Examples (Total {stats['enrichable']}):")
+            for id, title, old, target in updates:
+                if target != "UNKNOWN":
+                    print(f"  - [ID {id}] [ENRICH] '{title}' -> {target}")
 
     except Exception as e:
         print(f"Error during audit: {e}")
