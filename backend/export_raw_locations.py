@@ -33,27 +33,28 @@ def export_raw_data():
             if len(unique_locations[loc]["examples"]) < 3:
                 unique_locations[loc]["examples"].append(p.title)
 
-        output_file = "raw_locations_for_curation.txt"
+        output_file = "raw_locations_for_curation.md"
         with open(output_file, "w", encoding="utf-8") as f:
-            f.write("=== REPORTE DE UBICACIONES PARA CURACIÓN MANUAL ===\n")
-            f.write(f"Total de registros: {len(properties)}\n")
-            f.write(f"Ubicaciones únicas: {len(unique_locations)}\n\n")
-            f.write("Instrucciones:\n")
-            f.write("1. Revisa las ubicaciones abajo.\n")
-            f.write("2. Identifica a qué comuna o municipio pertenecen.\n")
-            f.write("3. Si ves un patrón (ej: 'Centro, ENVIGADO'), agrégalo al JSON en la categoría 'Envigado'.\n\n")
-            f.write("-" * 50 + "\n\n")
+            f.write("# Reporte de Ubicaciones para Curación Manual\n\n")
+            f.write(f"- **Total de registros:** {len(properties)}\n")
+            f.write(f"- **Ubicaciones únicas:** {len(unique_locations)}\n\n")
+            
+            f.write("## Instrucciones\n")
+            f.write("1. Revisa la tabla de ubicaciones abajo.\n")
+            f.write("2. Identifica la Comuna o Municipio correcto.\n")
+            f.write("3. Actualiza el archivo `neighborhood_map.json` con los nuevos hallazgos.\n\n")
+            
+            f.write("| Ubicación | Frecuencia | Ejemplos de Títulos |\n")
+            f.write("| :--- | :--- | :--- |\n")
 
             # Sort by count descending to prioritize most common ones
             sorted_locs = sorted(unique_locations.items(), key=lambda x: x[1]["count"], reverse=True)
 
             for loc, data in sorted_locs:
-                f.write(f"UBICACIÓN: {loc}\n")
-                f.write(f"FRECUENCIA: {data['count']}\n")
-                f.write(f"EJEMPLOS DE TÍTULOS:\n")
-                for ex in data['examples']:
-                    f.write(f"  - {ex}\n")
-                f.write("\n")
+                # Clean location and titles for markdown table compatibility
+                clean_loc = loc.replace("|", "\\|").replace("\n", " ")
+                examples = ", ".join(data['examples']).replace("|", "\\|").replace("\n", " ")
+                f.write(f"| {clean_loc} | {data['count']} | {examples} |\n")
 
         print(f"✅ Data exported successfully to {output_file}")
 
