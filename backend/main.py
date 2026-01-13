@@ -69,7 +69,7 @@ def read_root():
 @app.get("/properties")
 def get_properties(
     skip: int = 0, 
-    limit: int = 100, 
+    limit: int = 500, 
     source: Optional[str] = None,
     min_price: Optional[float] = None,
     max_price: Optional[float] = None,
@@ -187,7 +187,23 @@ def update_property_status(
 
 # --- SAVED SEARCHES ---
 
-@app.get("/searches", response_model=List[SavedSearchOut])
+@app.get("/stats")
+def get_stats(db: Session = Depends(get_db)):
+    """
+    Returns total property counts grouped by source.
+    """
+    from sqlalchemy import func
+    results = db.query(Property.source, func.count(Property.id)).group_by(Property.source).all()
+    
+    total = sum(count for source, count in results)
+    by_source = {source: count for source, count in results if source}
+    
+    return {
+        "total": total,
+        "by_source": by_source
+    }
+
+@app.get("/saved_searches", response_model=List[SavedSearchOut])
 def get_searches(db: Session = Depends(get_db)):
     searches = db.query(SavedSearch).all()
     # Parse JSON criteria for response

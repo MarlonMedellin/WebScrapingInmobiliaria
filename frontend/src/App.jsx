@@ -21,11 +21,24 @@ function App() {
   // Keep track of current filters for refresh actions
   const [currentFilters, setCurrentFilters] = useState({});
 
+  const fetchStats = async () => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/stats`);
+      const data = await response.json();
+      setStats({
+        total: data.total,
+        bySource: data.by_source
+      });
+    } catch (error) {
+      console.error("Error fetching stats:", error);
+    }
+  };
+
   const fetchProperties = async (filters = {}) => {
     setLoading(true);
     try {
       // Construct Query Params
-      const params = new URLSearchParams({ limit: 200 }); // Default limit
+      const params = new URLSearchParams({ limit: 1000 }); // Increased limit for all current data
 
       if (filters.source) params.append('source', filters.source);
       if (filters.search) params.append('search', filters.search);
@@ -40,14 +53,13 @@ function App() {
       const data = await response.json();
 
       setProperties(data);
-
-      const total = data.length;
-      const bySource = data.reduce((acc, curr) => {
-        acc[curr.source] = (acc[curr.source] || 0) + 1;
-        return acc;
-      }, {});
-
-      setStats({ total, bySource });
+      if (Object.keys(filters).length === 0) {
+        // If no filters, also update stats to keep in sync
+        fetchStats();
+      } else {
+        // If filtering, update local total only for the UI
+        setStats(prev => ({ ...prev, total: data.length }));
+      }
     } catch (error) {
       console.error("Error fetching properties:", error);
     } finally {
