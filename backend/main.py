@@ -110,6 +110,7 @@ def get_properties(
             with open(map_path, "r", encoding="utf-8") as f:
                 nb_map = json.load(f)
             
+            variants = nb_map.get(neighborhood, [neighborhood])
             # Crear filtros OR para cada variante buscando tanto en location como en title
             nb_filters = []
             for v in variants:
