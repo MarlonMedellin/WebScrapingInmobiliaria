@@ -1,0 +1,233 @@
+import json
+
+# Curated data provided by the user
+curated_data = {
+  "C4 - Aranjuez": {
+    "Aranjuez": ["Aranjuez, Medellín"],
+    "Campo Valdés": ["Campo Valdes Nro 1, Medellín", "Campo Valdes, Campo Valdes Nro 1, Medellín"]
+  },
+  "C7 - Robledo": {
+    "Robledo": ["Robledo, Medellín", "Aurora, Robledo, Medellín"],
+    "Pilarica": ["Antioquia, Medellín, La Pilarica"],
+    "Córdoba": ["Pablo Tobon Uribe, Cordoba, Medellín"],
+    "Florencia": ["Florencia, Medellín"]
+  },
+  "C8 - Villa Hermosa": {
+    "Villa Hermosa": ["Villa Hermosa, Medellín, Antioquia, Colombia"],
+    "Enciso": ["Sector La Y, Enciso, Medellín"]
+  },
+  "C9 - Buenos Aires": {
+    "Buenos Aires": ["Buenos Aires, MEDELLÍN", "Buenos Aires"],
+    "La Asomadera": ["La Asomadera, MEDELLÍN"]
+  },
+  "C10 - La Candelaria": {
+    "Centro": ["Centro, Medellín", "Medellín, Centro, Torres De Bombona"],
+    "La Candelaria": ["Candelaria, Medellín", "La Candelaria, MEDELLÍN"],
+    "Boston": ["Boston, MEDELLÍN"],
+    "Prado": ["Prado Medellín, MEDELLÍN"],
+    "San Diego": ["San Diego, MEDELLÍN"],
+    "Villa Nueva": ["Villa Nueva, MEDELLÍN"],
+    "El Chagualo": ["El Chagualo, Medellín"],
+    "Bomboná": ["Bombona, MEDELLÍN"]
+  },
+  "C11 - Laureles - Estadio": {
+    "Laureles": ["Laureles Medellín, MEDELLÍN", "Lorena, Laureles, Medellín"],
+    "Conquistadores": ["Conquistadores, MEDELLÍN", "Conquistadores, El Estadio, Medellín"],
+    "Estadio": ["Estadio, MEDELLÍN", "Estadio, Medellín, Antioquia, Colombia", "El Velódromo, MEDELLÍN"],
+    "San Joaquín": ["San Joaquín Laureles, MEDELLÍN"],
+    "La Castellana": ["La Castellana, MEDELLÍN"],
+    "Los Colores": ["Los Colores, MEDELLÍN"],
+    "Florida Nueva": ["Florida Nueva, MEDELLÍN"],
+    "Lorena": ["Lorena, MEDELLÍN"]
+  },
+  "C12 - La América": {
+    "Barrio Cristóbal": ["Barrio Cristóbal, MEDELLÍN"],
+    "Calasanz": [
+      "Calasanz, MEDELLÍN",
+      "Antioquia, Medellín, Calasanz",
+      "Calasanz, Calasanz, Medellín",
+      "Calasanz en Medellin",
+      "Calasanz Parte Alta, MEDELLÍN"
+    ],
+    "La Floresta": ["La Floresta, MEDELLÍN"],
+    "La América": [
+      "La América, MEDELLÍN",
+      "La América, Medellín",
+      "La América, Medellín, Antioquia, Colombia"
+    ],
+    "Almería": ["Almería, MEDELLÍN"],
+    "Santa Mónica": ["Santa Mónica, MEDELLÍN", "Santa Monica, Medellín"],
+    "El Danubio": ["El Danubio, MEDELLÍN"]
+  },
+  "C14 - El Poblado": {
+    "Ciudad del Río": ["Ciudad Del Rio, MEDELLÍN", "Antioquia, Medellín, Ciudad Del Río"],
+    "Loma del Indio": ["Loma Del Indio, MEDELLÍN", "Antioquia, Medellín, La Loma Del Indio", "Loma del indio, MEDELLÍN"],
+    "Castropol": ["Castropol, MEDELLÍN"],
+    "El Poblado": ["El Poblado, Medellín, Antioquia, Colombia", "Poblado en Medellin"],
+    "Patio Bonito": ["Patio Bonito, MEDELLÍN"],
+    "Aguacatala": ["Aguacatala, MEDELLÍN"],
+    "Los González": ["La Visitacion Los Gonzalez, MEDELLÍN"],
+    "Las Palmas": ["Las Palmas Medellín, MEDELLÍN"],
+    "El Tesoro": ["El Tesoro, MEDELLÍN"],
+    "Lalinde": ["Lalinde, MEDELLÍN"],
+    "Milla de Oro": ["Milla De Oro, MEDELLÍN"],
+    "Cola del Zorro": ["Altos Del Poblado Cola Del Zorro, MEDELLÍN"],
+    "San Lucas": ["San lucas, MEDELLÍN", "San lucas, ENVIGADO"],
+    "Santa María de los Ángeles": ["Santa maria de los angeles, MEDELLÍN", "Santa María De Los Ángeles, MEDELLÍN", "Santa María De La Paz, El Poblado, Medellín"],
+    "Las Lomas": ["Las Lomas, El Poblado, Medellín"],
+    "La Florida": ["La Florida El Poblado, MEDELLÍN"]
+  },
+  "C15 - Guayabal": {
+    "Campo Amor": ["Guayabal, Campo Amor, Medellín", "Campo Amor, Guayabal, Medellín"],
+    "Trinidad": ["Trinidad, Medellín"],
+    "Cristo Rey": [
+      "Cristo Rey, MEDELLÍN",
+      "Cristo Rey, Medellín",
+      "Cristo Rey, Guayabal, Medellín",
+      "Guyabal, Cristo Rey, Medellín",
+      "Cristo Rey, Cristo Rey, Medellín"
+    ],
+    "Guayabal": ["Guayabal, MEDELLÍN"],
+    "Santa Fe": ["Santa Fe, Medellín", "Guayabal, Santa Fe, Medellín"],
+    "La Colinita": ["La Colinita, Guayabal, Medellín", "La Colinita, La Colinita, Medellín", "Guayabal, La Colinita, Medellín"],
+    "Rodeo Sur": ["Rodeo Sur, Guayabal, Medellín", "Guayabal, Rodeo Sur, Medellín", "Rodeo Sur, Rodeo Sur, Medellín"],
+    "San Pablo": ["Guayabal, San Pablo, Medellín", "San Pablo, Medellín"],
+    "Rodeo Norte": ["Rodeo Norte, Guayabal, Medellín", "Guayabal, Rodeo Norte, Medellín"],
+    "Planeco": ["Guayabal, Planeco, Medellín"],
+    "Mayorca": ["Mayorca, Guayabal, Medellín", "Guayabal, Mayorca, Medellín"]
+  },
+  "C16 - Belén": {
+    "Belén": ["Belén, Medellín, Antioquia, Colombia", "Belen, MEDELLÍN"],
+    "Loma de los Bernal": ["La Loma De Los Bernal, MEDELLÍN", "Antioquia, Medellín, Loma De Los Bernal"],
+    "Rosales": ["Rosales, MEDELLÍN"],
+    "Fátima": ["Fátima Medellín, MEDELLÍN", "Estacion Nutibara Metroplus, Belen Fatima, Medellín"],
+    "Aguas Frías": ["Belen Aguas Frias, Belen Aguas Frias, Medellín"],
+    "Rincón de Belén": ["Belen Rincon, Belen Rincon, Medellín", "Antioquia, Medellín, Belen Rincon"],
+    "La Gloria": ["Belen La Gloria, Belen La Gloria, Medellín"],
+    "Los Alpes": ["Los Alpes, MEDELLÍN"],
+    "Buena Vista": ["Belen Buena Vista, Belen Buena Vista, Medellín"],
+    "Rodeo Alto": ["Antioquia, Medellín, Rodeo Alto", "Rodeo Alto, Guayabal, Medellín", "Rodeo Alto, MEDELLÍN"],
+    "Altavista": ["Belen Altavista, Belen Altavista, Medellín"],
+    "La Palma": ["La Palma, MEDELLÍN"],
+    "Las Playas": ["Las Playas, MEDELLÍN"],
+    "La Mota": ["La Mota, MEDELLÍN"],
+    "Nueva Villa de Aburrá": ["Nueva Villa De Aburrá, MEDELLÍN"],
+    "Belén Porvenir": ["Belén Porvenir, MEDELLÍN"],
+    "Miravalle": ["Miravalle, MEDELLÍN"]
+  },
+  "Corregimientos": {
+    "San Antonio de Prado": [
+      "San Antonio De Prado, Medellín",
+      "Prados Del Este, San Antonio De Prado, Medellín",
+      "Medellín, San Antonio De Prado, Urb. Prado Verde",
+      "Medellín, San Antonio De Prado, Urb Arboleda De San Antonio",
+      "San Antonio De Prado, MEDELLÍN"
+    ]
+  },
+  "Envigado": {
+    "Centro": ["Centro de envigado, ENVIGADO"],
+    "Barrio Mesa": ["Barrio mesa, ENVIGADO"],
+    "Trianón": ["Trianon, ENVIGADO", "El trianon, ENVIGADO"],
+    "Alcalá": ["Alcala, ENVIGADO"],
+    "San José": ["San jose, ENVIGADO"],
+    "Dorado": ["Dorado, ENVIGADO", "El dorado, ENVIGADO"],
+    "Chingüí": ["El chingui 1, ENVIGADO", "Chingui #2, ENVIGADO", "El chingui 2, ENVIGADO"],
+    "La Mina": ["La mina, ENVIGADO"],
+    "Camino Verde": ["Camino verde, ENVIGADO"],
+    "Las Flores": ["Las flores, ENVIGADO"],
+    "Antillas": ["Las antillas, ENVIGADO"],
+    "La Cuenca": ["La cuenca, ENVIGADO"],
+    "Las Vegas": ["Las vegas, ENVIGADO"],
+    "La Paz": ["La paz, ENVIGADO"],
+    "San Rafael": ["San rafael, ENVIGADO"],
+    "El Portal": ["El portal, ENVIGADO"],
+    "Las Orquídeas": ["Las orquideas, ENVIGADO"],
+    "Barrio Obrero": ["Barrio obrero, ENVIGADO"],
+    "Zúñiga": ["Zúñiga, ENVIGADO"],
+    "Loma del Escobero": ["Loma del escobero, ENVIGADO"],
+    "San Marcos": ["San marcos, ENVIGADO"],
+    "Loma del Esmeraldal": ["Loma del esmeraldal, ENVIGADO"],
+    "La Pradera": ["La pradera, ENVIGADO"],
+    "La Magnolia": ["La magnolia, ENVIGADO"],
+    "Manuel Uribe Ángel": ["Manuel uribe angel, ENVIGADO", "Uribe angel parte plana, ENVIGADO"],
+    "Gualandayes": ["Gualandayes, ENVIGADO"],
+    "Santa Gertrudis": ["Santa gertrudis, ENVIGADO"],
+    "Loma de Cumbres": ["Loma de cumbres, ENVIGADO"],
+    "El Salado": ["El salado, ENVIGADO"],
+    "Loma de las Brujas": ["Loma de las brujas, ENVIGADO"],
+    "Loma del Chocho": ["Loma de chocho, ENVIGADO", "Loma del chocho, ENVIGADO"],
+    "Oasis": ["Oasis, ENVIGADO", "Oasis 1, ENVIGADO", "Oasis 2, ENVIGADO"],
+    "Las Margaritas": ["Las margaritas, ENVIGADO"],
+    "Metropolitano": ["Metropolitano, ENVIGADO"],
+    "La Sebastiana": ["La sebastiana, ENVIGADO"],
+    "Las Casitas": ["Las casitas, ENVIGADO"],
+    "Santa Elena": ["Santa elena, ENVIGADO"],
+    "La Florida": ["La florida, ENVIGADO"],
+    "Andalucía": ["Andalucia, ENVIGADO"],
+    "Envigado General": ["Envigado, Antioquia, Colombia", "Apartamento en Envigado, Antioquia", "Envigado"]
+  },
+  "Sabaneta": {
+    "Sabaneta General": ["Sabaneta, SABANETA"],
+    "Las Lomitas": ["Apartamento en Las Lomitas, Sabaneta, Antioquia"],
+    "San José": ["San jose, SABANETA"],
+    "María Auxiliadora": ["Maria auxiliadora, SABANETA"],
+    "Centro": ["Centro sabaneta, SABANETA"],
+    "El Trapiche": ["El trapiche, SABANETA"],
+    "Aves María": ["Aves maria, SABANETA"],
+    "La Doctora": ["Sabaneta, La Doctora, Century Tower II Apartamentos"],
+    "Holanda": ["Sabaneta, Holanda, Ed. Gireth"]
+  },
+  "Itagüí": {
+    "Santa María": ["Itagüí, Santa Maria", "Santa maria, ITAGUI"],
+    "San Pío": ["Itagüí, San Pio"],
+    "Itagüí General": ["Itagui"],
+    "Calatrava": ["Itagüí, Calatrava", "Calatrava, ITAGUI"],
+    "Villa Paula": ["Itagüí, Villa Paula"],
+    "Bariloche": ["Bariloche, ITAGUI"],
+    "Ditaires": ["Itagüí, Ditaires, Urb. Pacifica"],
+    "Suramérica": ["Itagüí, Suramerica, Urb. Rivera De Suramerica"],
+    "Viviendas del Sur": ["Itagüí, Viviendas Del Sur, Urb. Villa Sol"],
+    "Playa Rica": ["Itagüí, Playa Rica, Urb. Tulipanes Del Sur"],
+    "Asturias": ["Itagüí, Asturias, Ed. Ambar", "Itagüí, Asturias"],
+    "Las Acacias": ["Itagüí, Las Acacias", "Itagüí, Las Acacias, Urb. Las Americas"],
+    "Las Margaritas": ["Itagüí, Las Margaritas"]
+  }
+}
+
+# Flatten the structure for neighborhood_map.json
+flattened_map = {}
+detailed_map = {} # Keep the hierarchy for prefixing script
+
+for comuna, barrios in curated_data.items():
+    flattened_map[comuna] = []
+    detailed_map[comuna] = {}
+    for barrio, variants in barrios.items():
+        detailed_map[comuna][barrio] = variants
+        for v in variants:
+            if v not in flattened_map[comuna]:
+                flattened_map[comuna].append(v)
+        # Also add the barrio name itself as a variant if not present
+        if barrio not in flattened_map[comuna]:
+            flattened_map[comuna].append(barrio)
+
+# We should also load the existing map to preserve any categories NOT in the user's list (like C1, C3, C13 etc.)
+try:
+    with open("backend/neighborhood_map.json", "r", encoding="utf-8") as f:
+        existing_map = json.load(f)
+except:
+    existing_map = {}
+
+# Merging (curated data overwrites)
+final_map = existing_map.copy()
+for k, v in flattened_map.items():
+    final_map[k] = v
+
+with open("backend/neighborhood_map.json", "w", encoding="utf-8") as f:
+    json.dump(final_map, f, indent=4, ensure_ascii=False)
+
+# Save the detailed map for the migration script
+with open("backend/detailed_curated_map.json", "w", encoding="utf-8") as f:
+    json.dump(detailed_map, f, indent=4, ensure_ascii=False)
+
+print("✅ neighborhood_map.json updated with curated data.")
+print("✅ detailed_curated_map.json created for migration.")
