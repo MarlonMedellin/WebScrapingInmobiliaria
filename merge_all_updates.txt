@@ -1,0 +1,39 @@
+-- Temp table
+CREATE TEMP TABLE temp_import (
+    title text,
+    price double precision,
+    location text,
+    link text,
+    description text,
+    area double precision,
+    bedrooms integer,
+    bathrooms integer,
+    source text,
+    image_url text,
+    active boolean,
+    status text,
+    last_seen timestamptz
+);
+
+-- Panda
+\copy temp_import FROM '/tmp/panda_updates.csv' WITH CSV HEADER;
+-- La Castellana
+\copy temp_import FROM '/tmp/lacastellana_updates.csv' WITH CSV HEADER;
+-- El Castillo
+\copy temp_import FROM '/tmp/elcastillo_updates.csv' WITH CSV HEADER;
+
+-- Merging logic (Unified)
+INSERT INTO properties (
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+)
+SELECT 
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+FROM temp_import
+ON CONFLICT (link) DO UPDATE SET
+    price = EXCLUDED.price,
+    last_seen = EXCLUDED.last_seen,
+    active = EXCLUDED.active,
+    status = EXCLUDED.status,
+    source = EXCLUDED.source; -- Update source just in case
+
+DROP TABLE temp_import;

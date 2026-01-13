@@ -7,6 +7,15 @@ from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class CastellanaScraper(BaseScraper):
+    """
+    Scraper for La Castellana.
+    
+    GOLDEN RULES:
+    1. Golden URL: /s/{type}/alquileres?page={n} (e.g. /s/apartamento/alquileres).
+    2. Grid Handling: waits for selector '.item.shadow-sm'.
+    3. Explicit Types: Iterates through ["apartamento", "apartaestudio"] explicitly.
+    4. Robust Pagination: Stops when no cards are found on a page.
+    """
     def __init__(self, db):
         super().__init__(db)
         self.portal_name = "lacastellana"

@@ -11,6 +11,8 @@ from scrapers.integridad import IntegridadScraper
 from scrapers.lacastellana import CastellanaScraper
 from scrapers.panda import PandaScraper
 from scrapers.elcastillo import ElCastilloScraper
+from scrapers.monserrate import MonserrateScraper
+from scrapers.suvivienda import SuViviendaScraper
 
 # Configure logging
 logging.basicConfig(
@@ -20,14 +22,16 @@ logging.basicConfig(
 logger = logging.getLogger("LocalSeeder")
 
 SCRAPERS = {
-    "albertoalvarez": AlbertoAlvarezScraper,
-    "ayura": AyuraScraper,
-    "santafe": SantaFeScraper,
-    "protebienes": ProtebienesScraper,
-    "integridad": IntegridadScraper,
     "lacastellana": CastellanaScraper,
+    "panda": PandaScraper,
     "elcastillo": ElCastilloScraper,
-    "panda": PandaScraper
+    "santafe": SantaFeScraper,
+    "integridad": IntegridadScraper,
+    "protebienes": ProtebienesScraper,
+    "suvivienda": SuViviendaScraper,
+    "ayura": AyuraScraper,
+    "albertoalvarez": AlbertoAlvarezScraper,
+    "monserrate": MonserrateScraper
 }
 
 async def seed_portal(portal_name: str, max_pages: int, headless: bool):

@@ -7,6 +7,15 @@ import re
 logger = logging.getLogger(__name__)
 
 class SuViviendaScraper(BaseScraper):
+    """
+    Scraper for Su Vivienda.
+    
+    GOLDEN RULES:
+    1. URL Sensitivity: Type segment (e.g., 'Apartamento') should be Capitalized.
+    2. Path Structure: /inmuebles/Arriendo/{Type}/Medellín/{page_num}.
+    3. Safety Limit: Hardcoded limit of 10 pages per type to prevent cycles.
+    4. Selector: '.property_item' (similar to Integridad/Protebienes template).
+    """
     def __init__(self, db: Session):
         super().__init__(db)
         self.portal_name = "suvivienda"

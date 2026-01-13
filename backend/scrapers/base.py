@@ -100,12 +100,23 @@ class BaseScraper(ABC):
             
             if existing:
                 update_property_last_seen(self.db, existing)
+                has_updates = False
+
                 # Update price if changed
                 if existing.price != data["price"]:
                     update_property_price(self.db, existing, data["price"])
-                    return "updated"
-                else:
-                    return "existing"
+                    has_updates = True
+                
+                # Update metadata if changed
+                if (existing.area != data.get("area") or 
+                    existing.bedrooms != data.get("bedrooms") or 
+                    existing.bathrooms != data.get("bathrooms")):
+                    
+                    from crud import update_property_metadata
+                    update_property_metadata(self.db, existing, data)
+                    has_updates = True
+
+                return "updated" if has_updates else "existing"
             else:
                 create_property(self.db, data)
                 return "new"

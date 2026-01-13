@@ -1,0 +1,35 @@
+-- Create temp table matching structure
+CREATE TEMP TABLE temp_elcastillo_import (
+    title text,
+    price double precision,
+    location text,
+    link text,
+    description text,
+    area double precision,
+    bedrooms integer,
+    bathrooms integer,
+    source text,
+    image_url text,
+    active boolean,
+    status text,
+    last_seen timestamptz
+);
+
+-- Copy data from CSV (Standard Input)
+\copy temp_elcastillo_import FROM '/tmp/elcastillo_updates.csv' WITH CSV HEADER;
+
+-- Upsert into main table
+INSERT INTO properties (
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+)
+SELECT 
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+FROM temp_elcastillo_import
+ON CONFLICT (link) DO UPDATE SET
+    price = EXCLUDED.price,
+    last_seen = EXCLUDED.last_seen,
+    active = EXCLUDED.active,
+    status = EXCLUDED.status;
+
+-- Cleanup
+DROP TABLE temp_elcastillo_import;

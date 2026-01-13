@@ -18,12 +18,19 @@ def update_property_last_seen(db: Session, db_property: Property):
     db.commit()
     db.refresh(db_property)
 
-def update_property_price(db: Session, db_property: Property, new_price: str):
+def update_property_price(db: Session, db_property: Property, new_price: float):
     # Here we could implement history tracking in another table if needed.
     # For now, just update.
     if db_property.price != new_price:
         # TODO: Log price change?
         db_property.price = new_price
+    db.commit()
+
+def update_property_metadata(db: Session, db_property: Property, data: dict):
+    """Update area, bedrooms and bathrooms."""
+    db_property.area = data.get("area", db_property.area)
+    db_property.bedrooms = data.get("bedrooms", db_property.bedrooms)
+    db_property.bathrooms = data.get("bathrooms", db_property.bathrooms)
     db.commit()
 
 def archive_stale_properties(db: Session, days: int = 3):

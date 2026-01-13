@@ -21,7 +21,10 @@ Este archivo contiene la lista oficial de inmobiliarias y portales que alimentan
 | 13 | **Finca Raíz** | `fincaraiz` | 2 | Crawler limitado. |
 | 14 | **El Castillo** | `elcastillo` | 488+ | **Golden Logic:** Infinite Scroll (6s wait) + Location auto-append. |
 | 15 | **Inmobiliaria Panda** | `panda` | 63 | **Golden Logic:** SPA Interactions (Filters + JS Pagination). |
-| 16 | **Monserrate** | `monserrate` | 0 | Implementado. |
+| 16- [x] **Monserrate**
+  - **Golden Logic**: WooCommerce structure. Data extracted reliably from `li` class attributes (`pa_area-X`, `pa_sector-Y`).
+  - **URL**: `/product-category/arrendamiento/page/{n}/`
+ |
 | 17 | **Aportal** | `aportal` | 0 | Implementado. |
 
 ---

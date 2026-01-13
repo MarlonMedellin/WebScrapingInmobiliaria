@@ -7,6 +7,15 @@ from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class ProtebienesScraper(BaseScraper):
+    """
+    Scraper for Protebienes.
+    
+    GOLDEN RULES:
+    1. Golden URL: /inmuebles/Arriendo/{page_num} (Simple integer pagination).
+    2. Card Detection: Selector '.property_item' determines valid content.
+    3. Pagination Stop: Breaks loop if card selector returns empty list.
+    4. Image Fix: Handles relative (//) and root-relative URLs for images.
+    """
     def __init__(self, db):
         super().__init__(db)
         self.portal_name = "protebienes"

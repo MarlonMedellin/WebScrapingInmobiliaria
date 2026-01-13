@@ -1,0 +1,35 @@
+-- Temp table
+CREATE TEMP TABLE temp_import_lac (
+    title text,
+    price double precision,
+    location text,
+    link text,
+    description text,
+    area double precision,
+    bedrooms integer,
+    bathrooms integer,
+    source text,
+    image_url text,
+    active boolean,
+    status text,
+    last_seen timestamptz
+);
+
+-- La Castellana
+\copy temp_import_lac FROM '/tmp/lacastellana_updates.csv' WITH CSV HEADER;
+
+-- Merging logic
+INSERT INTO properties (
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+)
+SELECT 
+    title, price, location, link, description, area, bedrooms, bathrooms, source, image_url, active, status, last_seen
+FROM temp_import_lac
+ON CONFLICT (link) DO UPDATE SET
+    price = EXCLUDED.price,
+    last_seen = EXCLUDED.last_seen,
+    active = EXCLUDED.active,
+    status = EXCLUDED.status,
+    source = EXCLUDED.source; 
+
+DROP TABLE temp_import_lac;

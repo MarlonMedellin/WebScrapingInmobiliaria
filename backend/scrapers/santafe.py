@@ -7,6 +7,15 @@ import re
 logger = logging.getLogger(__name__)
 
 class SantaFeScraper(BaseScraper):
+    """
+    Scraper for Arrendamientos Santa Fe.
+    
+    GOLDEN RULES:
+    1. Golden URL: /propiedades/?page={n}&&bussines_type=Arrendar (Note double '&').
+    2. Param Order: 'page' must come BEFORE 'bussines_type'.
+    3. Grid Wait: Selector '.inner-card' with long timeout (15s) due to slow server.
+    4. Random Delay: 3-5s random wait to mimic human behavior and avoid blocking.
+    """
     def __init__(self, db: Session):
         super().__init__(db)
         self.portal_name = "santafe"

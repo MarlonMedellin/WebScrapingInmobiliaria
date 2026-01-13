@@ -7,6 +7,15 @@ from .config import SEARCH_CRITERIA
 logger = logging.getLogger(__name__)
 
 class IntegridadScraper(BaseScraper):
+    """
+    Scraper for Arrendamientos Integridad.
+    
+    GOLDEN RULES:
+    1. Golden URL: /inmuebles/Arriendo/{page_num}.
+    2. Selector: '.property_item' for cards.
+    3. Image Fix: Handles '//' protocol-relative and root-relative URLs.
+    4. High Latency: Requires random wait (5-8s) due to slow server response.
+    """
     def __init__(self, db):
         super().__init__(db)
         self.portal_name = "integridad"

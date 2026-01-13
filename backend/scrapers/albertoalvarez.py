@@ -8,6 +8,15 @@ import json
 logger = logging.getLogger(__name__)
 
 class AlbertoAlvarezScraper(BaseScraper):
+    """
+    Scraper for Alberto Álvarez.
+    
+    GOLDEN RULES:
+    1. Hidden JSON: Data is extracted from hidden `<textarea class="field-property">`.
+    2. URL Pattern: /inmuebles/arrendamientos/{type}/medellin/?pag={n}.
+    3. Selector: `.property` cards container.
+    4. Fallback: Uses HTML parsing only if JSON extraction fails.
+    """
     def __init__(self, db: Session):
         super().__init__(db)
         self.portal_name = "albertoalvarez"

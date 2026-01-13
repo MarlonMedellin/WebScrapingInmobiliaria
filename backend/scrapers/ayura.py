@@ -7,6 +7,15 @@ import re
 logger = logging.getLogger(__name__)
 
 class AyuraScraper(BaseScraper):
+    """
+    Scraper for Arrendamientos Ayurá.
+    
+    GOLDEN RULES:
+    1. CMS Data: Extracts clean data from `cms-field-var` attributes (highly reliable).
+    2. Query Params: `iku5-service_type=0` (Arriendo) & `iku5-id_type={id}`.
+    3. Render Wait: Must wait for selector `[cms-content-catalog-body]` as it's client-rendered.
+    4. Title Inference: Title is constructed dynamically from Neighborhood as it's missing in card.
+    """
     def __init__(self, db: Session):
         super().__init__(db)
         self.portal_name = "ayura"

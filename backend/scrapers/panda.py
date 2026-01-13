@@ -8,6 +8,15 @@ logger = logging.getLogger(__name__)
 from .config import SEARCH_CRITERIA
 
 class PandaScraper(BaseScraper):
+    """
+    Scraper for Panda Inmobiliaria.
+    
+    GOLDEN RULES:
+    1. SPA Interactions: Uses Playwright to toggle checkboxes (Comprar OFF, Arrendar ON).
+    2. Type Iteration: Explicitly loop through types (Apartamento, Casa, etc.) via 'type-X' IDs.
+    3. Dynamic Waiting: Wait for article[data-testid="property-card"] to ensure SPA content loads.
+    4. Data Attributes: Extract details from 'data-property-*' attributes for reliability.
+    """
     def __init__(self, db: Session):
         super().__init__(db)
         self.portal_name = "panda"
