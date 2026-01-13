@@ -14,7 +14,7 @@ def fix_locations():
     db: Session = SessionLocal()
     try:
         # Cargar mapa de barrios para la resolución
-        map_path = "backend/neighborhood_map.json"
+        map_path = "neighborhood_map.json"
         with open(map_path, "r", encoding="utf-8") as f:
             nb_map = json.load(f)
 
