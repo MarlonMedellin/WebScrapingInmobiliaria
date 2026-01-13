@@ -6,9 +6,9 @@ from sqlalchemy.orm import Session
 # Asegurar que podemos importar desde el backend
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from backend.database import SessionLocal
-from backend.models import Property
-from backend.neighborhood_utils import auto_resolve_neighborhood
+from database import SessionLocal
+from models import Property
+from neighborhood_utils import auto_resolve_neighborhood
 
 def fix_locations():
     db: Session = SessionLocal()
