@@ -8,7 +8,7 @@ import { API_BASE_URL, API_KEY } from './config'
 const PORTALS = [
   "fincaraiz", "elcastillo", "santafe", "panda",
   "integridad", "protebienes", "lacastellana", "monserrate", "aportal",
-  "escalainmobiliaria", "suvivienda", "portofino", "nutibara", "laaldea"
+  "escalainmobiliaria", "suvivienda", "portofino", "nutibara", "laaldea", "ayura"
 ];
 
 function App() {
