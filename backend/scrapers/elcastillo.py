@@ -1,112 +1,169 @@
-import asyncio
+from .base import BaseScraper
+from bs4 import BeautifulSoup
 import logging
 import re
+import asyncio
 
-from playwright.async_api import async_playwright
-from sqlalchemy.orm import Session
-from .base import BaseScraper
-from database import SessionLocal
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-from .config import SEARCH_CRITERIA
-
-# Note: Investigating filtering capabilities. Using generic Arriendo filter + Price if supported.
-# If not supported, BaseScraper logic (Phase 5) will handle exclusion.
-
 class ElCastilloScraper(BaseScraper):
-    def __init__(self, db: Session):
-        super().__init__(db)
+    """
+    Scraper for Arrendamientos El Castillo.
+    
+    GOLDEN RULES:
+    1. Infinite Scroll: Uses window.scrollTo with a robust loop to load all cards.
+    2. Wait Time: Must wait at least 6 seconds (6000ms) after scroll to ensure JS fetch completes.
+    3. Location Fix: Appends ", Medellín" to locations (e.g., "BELEN PARQUE") to pass the 'should_include_property' filter.
+    4. Field Cleaning: Ignores 'garage' field as it's not supported by the current Property model.
+    """
+    
+    def __init__(self, db_session):
+        super().__init__(db_session)
         self.portal_name = "elcastillo"
+        self.base_url = "https://www.arrendamientoselcastillo.com.co"
 
     async def scrape(self):
-        try:
-            # Construct URL with price if possible. 
-            # Trying standard param approach just in case, otherwise fallback specific
-            # URL: .../resultados?gestion=Arriendo
-            max_price = SEARCH_CRITERIA["max_price"]
-            # Adding generic params often seen in software used by them (Simi/Wasi?)
-            # Actually El Castillo looks custom or specific template.
-            # We'll use the base Arriendo url and rely on Python filtering for now to be safe,
-            # as adding wrong params might break results.
-            url = "https://www.arrendamientoselcastillo.com.co/resultados?gestion=Arriendo"
+        url = f"{self.base_url}/resultados?gestion=Arriendo"
+        
+        logger.info(f"[{self.portal_name}] Navigating to {url}")
+        
+        await self.navigate(url)
+        await self.page.wait_for_timeout(3000) # Wait for initial load
+
+        # Iterate until no new cards are loaded
+        last_count = 0
+        retries = 0
+        max_retries = 10 # High retry count for stability during network lags
+        
+        processed_ids = set()
+        
+        while True:
+            # GOLDEN RULE: Scroll to bottom
+            await self.page.evaluate("window.scrollTo(0, document.body.scrollHeight)")
+            # GOLDEN RULE: Wait 6s for dynamic content
+            await self.page.wait_for_timeout(6000) 
             
-            await self.navigate(url)
+            # Check for new cards
+            cards = await self.page.locator(".estate_itm").all()
+            current_count = len(cards)
             
+            logger.info(f"[{self.portal_name}] Current visible cards: {current_count}")
+            
+            if current_count == last_count:
+                retries += 1
+                logger.info(f"[{self.portal_name}] No new cards found (Retry {retries}/{max_retries})")
+                if retries >= max_retries:
+                    logger.info(f"[{self.portal_name}] Infinite scroll finished. Total cards: {current_count}")
+                    break
+            else:
+                retries = 0
+                last_count = current_count
+                
+                # Check for max pages limit (if set, e.g., for testing)
+                if self.max_pages and retries == 0:
+                   # treat approx 20 cards as a 'page'
+                   if current_count // 20 >= self.max_pages:
+                       logger.info(f"[{self.portal_name}] Reached max pages/scrolls limit ({self.max_pages}). Stopping.")
+                       break
+
+                content = await self.page.content()
+                await self.process_html(content, processed_ids)
+
+    async def process_html(self, content, processed_ids):
+        soup = BeautifulSoup(content, 'html.parser')
+        cards = soup.select(".estate_itm")
+        
+        new_cards_count = 0
+        for card in cards:
             try:
-                await self.page.wait_for_selector("div.estate_itm", timeout=15000)
-            except Exception as e:
-                logger.error("Timeout waiting for content.")
-                await self.dump_html()
-                return
-
-            # Scroll to load (simple scroll)
-            scrolls = SEARCH_CRITERIA.get("scroll_depth", 10)
-            for _ in range(scrolls):
-                await self.page.mouse.wheel(0, 1000)
-                await asyncio.sleep(1)
-
-            cards = await self.page.locator("div.estate_itm").all()
-            logger.info(f"Found {len(cards)} listings")
-
-            count = 0
-            consecutive_existing = 0
-
-            for i, card in enumerate(cards):
-                try:
-                    # Link
-                    link_locator = card.locator("div.estate_itm--media > a").first
-                    full_link = await link_locator.get_attribute("href")
-                    if not full_link:
-                        continue
-                    
-                    # Title
-                    title_locator = card.locator("div.estate_itm--info h4").first
-                    title_text = await title_locator.text_content()
-                    
-                    # Price
-                    price_locator = card.locator("div.price p").first
-                    price_text = await price_locator.text_content()
-                    price = float(re.sub(r'[^\d]', '', price_text)) if price_text and re.sub(r'[^\d]', '', price_text) else 0
-                    
-                    # Location
-                    location_text = "Medellin"
-                    if title_text and "-" in title_text:
-                        parts = title_text.split("-")
-                        if len(parts) > 1:
-                            location_text = parts[-1].strip()
-
-                    status = await self.process_property({
-                        "title": title_text.strip() if title_text else "No Title",
-                        "price": price,
-                        "location": location_text,
-                        "link": full_link,
-                        "source": self.portal_name
-                    })
-                    count += 1
-                    
-                    # Stop logic
-                    if status == "existing":
-                        consecutive_existing += 1
-                    elif status == "new" or status == "updated":
-                        consecutive_existing = 0
-                    
-                    if self.should_stop_scraping(consecutive_existing):
-                        break
-
-                except Exception as e:
-                    logger.error(f"Error parsing card {i}: {e}")
+                # Extract ID/Code
+                code_span = card.select_one("._top span")
+                code_text = code_span.get_text(strip=True) if code_span else ""
+                code = re.sub(r'[^0-9]', '', code_text)
+                
+                if not code or code in processed_ids:
                     continue
-            
-            logger.info(f"Successfully processed {count} properties")
-        finally:
-            await self.close_browser()
+                
+                processed_ids.add(code)
+                new_cards_count += 1
+                
+                # Link
+                link_tag = card.select_one("._estate-link a")
+                link = link_tag['href'] if link_tag else ""
+                if not link:
+                    # Fallback for onclick handling
+                    onclick_tag = card.select_one("h4[onclick]")
+                    if onclick_tag:
+                         match = re.search(r"window.open\('([^']+)'\)", onclick_tag['onclick'])
+                         if match:
+                             link = match.group(1)
 
-if __name__ == "__main__":
-    db = SessionLocal()
-    scraper = ElCastilloScraper(db)
-    asyncio.run(scraper.scrape())
-    db.close()
+                if not link:
+                    continue
 
+                # Title & Location
+                title_tag = card.select_one("h4")
+                title = title_tag.get_text(strip=True) if title_tag else ""
+                
+                # GOLDEN RULE: Location Fix (Append City)
+                location = "Medellín"
+                if "-" in title:
+                    sub_loc = title.split("-")[-1].strip()
+                    location = f"{sub_loc}, Medellín"
+
+                # Price
+                price_tag = card.select_one(".price p")
+                price_text = price_tag.get_text(strip=True) if price_tag else "0"
+                price = int(re.sub(r'[^0-9]', '', price_text)) if re.sub(r'[^0-9]', '', price_text) else 0
+
+                # Area
+                area = 0
+                area_tag = card.select_one(".size small")
+                if area_tag:
+                    area_text = area_tag.get_text(strip=True)
+                    # "70 m²"
+                    area = float(re.sub(r'[^0-9.]', '', area_text)) if re.sub(r'[^0-9.]', '', area_text) else 0
+
+                # Bedrooms, Bathrooms, Garage
+                bedrooms = 0
+                bathrooms = 0
+                garage = 0
+                
+                info_items = card.select("._info-itm")
+                for item in info_items:
+                    text = item.get_text(strip=True).lower()
+                    if "alcobas" in text:
+                        bedrooms = int(re.sub(r'[^0-9]', '', text)) if re.sub(r'[^0-9]', '', text) else 0
+                    elif "baños" in text:
+                        bathrooms = int(re.sub(r'[^0-9]', '', text)) if re.sub(r'[^0-9]', '', text) else 0
+                    elif "parq" in text:
+                        garage = int(re.sub(r'[^0-9]', '', text)) if re.sub(r'[^0-9]', '', text) else 0
+
+                # Image
+                image_tag = card.select_one("picture img")
+                image_url = image_tag['src'] if image_tag else None
+
+                description = title
+
+                data = {
+                    "title": title,
+                    "price": price,
+                    "location": location,
+                    "link": link,
+                    "image_url": image_url,
+                    "area": area,
+                    "bedrooms": bedrooms,
+                    "bathrooms": bathrooms,
+                    # 'garage' excluded as it is not in the Property model
+                    "source": self.portal_name,
+                    "description": description
+                }
+                
+                await self.process_property(data)
+                
+            except Exception as e:
+                logger.error(f"[{self.portal_name}] Error parsing card {code}: {e}")
+                continue
+        
+        if new_cards_count > 0:
+            logger.info(f"[{self.portal_name}] Processed {new_cards_count} new cards this batch")

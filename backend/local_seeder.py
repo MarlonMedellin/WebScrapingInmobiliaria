@@ -5,6 +5,12 @@ from sqlalchemy.orm import Session
 from database import SessionLocal
 from scrapers.albertoalvarez import AlbertoAlvarezScraper
 from scrapers.ayura import AyuraScraper
+from scrapers.santafe import SantaFeScraper
+from scrapers.protebienes import ProtebienesScraper
+from scrapers.integridad import IntegridadScraper
+from scrapers.lacastellana import CastellanaScraper
+from scrapers.panda import PandaScraper
+from scrapers.elcastillo import ElCastilloScraper
 
 # Configure logging
 logging.basicConfig(
@@ -15,7 +21,13 @@ logger = logging.getLogger("LocalSeeder")
 
 SCRAPERS = {
     "albertoalvarez": AlbertoAlvarezScraper,
-    "ayura": AyuraScraper
+    "ayura": AyuraScraper,
+    "santafe": SantaFeScraper,
+    "protebienes": ProtebienesScraper,
+    "integridad": IntegridadScraper,
+    "lacastellana": CastellanaScraper,
+    "elcastillo": ElCastilloScraper,
+    "panda": PandaScraper
 }
 
 async def seed_portal(portal_name: str, max_pages: int, headless: bool):
@@ -45,6 +57,26 @@ async def seed_portal(portal_name: str, max_pages: int, headless: bool):
         await scraper.close_browser()
         db.close()
 
+import requests
+import sys
+
+def verify_ip():
+    FORBIDDEN_IP = "191.109.114.36"
+    try:
+        response = requests.get("https://api64.ipify.org?format=json", timeout=10)
+        current_ip = response.json().get("ip")
+        logger.info(f"Current IP Scan: {current_ip}")
+        
+        if current_ip == FORBIDDEN_IP:
+            logger.error(f"🛑 SEGURIDAD ACTIVADA: Estás usando tu IP real ({current_ip}).")
+            logger.error("Por favor ACTIVA LA VPN antes de continuar.")
+            sys.exit(1)
+        else:
+            logger.info("✅ IP Segura detectada (VPN o distinta a la local). Procediendo.")
+            
+    except Exception as e:
+        logger.warning(f"No se pudo verificar la IP ({e}). Procediendo con precaución...")
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Local Deep Scrape Seeder")
     parser.add_argument("--portal", required=True, help="Portal key (e.g., albertoalvarez)")
@@ -52,5 +84,8 @@ if __name__ == "__main__":
     parser.add_argument("--visible", action="store_true", help="Show browser window (not headless)")
     
     args = parser.parse_args()
+    
+    # Verify IP before doing anything else
+    verify_ip()
     
     asyncio.run(seed_portal(args.portal, args.max_pages, not args.visible))

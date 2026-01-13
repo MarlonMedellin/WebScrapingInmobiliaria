@@ -14,89 +14,186 @@ class PandaScraper(BaseScraper):
         self.base_url = "https://pandainmobiliaria.com"
 
     async def scrape(self):
+        url = f"{self.base_url}/inmuebles"
         try:
-            # Operacion 2 normally means Arriendo
-            # We assume filtering by price in URL is risky without doc, relying on Phase 5
-            url = f"{self.base_url}/inmuebles?operacion=2" 
-            await self._scrape_url(url)
+            logger.info(f"[{self.portal_name}] Navigating to {url}")
+            await self.navigate(url)
+            await self.page.wait_for_timeout(3000)
+
+            # --- FILTERING ---
+            logger.info(f"[{self.portal_name}] Applying filters: Arrendar ON, Comprar OFF")
+
+            # 1. Expand "Gestión" if needed (it seems expanded by default in HTML)
+            # 2. Uncheck Comprar (mode-5) - Default Checked
+            try:
+                # Use label click for reliability
+                comprar_label = self.page.locator('label[for="mode-5"]')
+                if await comprar_label.count() > 0:
+                    # Check if input is checked
+                    is_checked = await self.page.eval_on_selector('#mode-5', 'el => el.checked')
+                    if is_checked:
+                        logger.info(f"[{self.portal_name}] Unchecking 'Comprar'...")
+                        await comprar_label.click()
+                        await self.page.wait_for_timeout(1000)
+            except Exception as e:
+                logger.warning(f"[{self.portal_name}] Issue unchecking Comprar: {e}")
+
+            # 3. Check Arrendar (mode-1) - Default Unchecked
+            try:
+                 arriendar_label = self.page.locator('label[for="mode-1"]')
+                 is_arriendo_checked = await self.page.eval_on_selector('#mode-1', 'el => el.checked')
+                 if not is_arriendo_checked:
+                     logger.info(f"[{self.portal_name}] Checking 'Arrendar'...")
+                     await arriendar_label.click()
+                     await self.page.wait_for_timeout(2000) # Wait for list refresh
+            except Exception as e:
+                logger.error(f"[{self.portal_name}] Issue checking Arrendar: {e}")
+
+            # --- TYPE ITERATION ---
+            # Map types to input IDs
+            target_types = {
+                "Apartamento": "type-2",
+                "Casa": "type-1", 
+                "Apartaestudio": "type-14",
+                "Local": "type-3",
+                "Oficina": "type-4"
+            }
+
+            for type_name, input_id in target_types.items():
+                logger.info(f"[{self.portal_name}] Filtering by type: {type_name}")
+                
+                # Check the specific type
+                type_label = self.page.locator(f'label[for="{input_id}"]')
+                try:
+                    await type_label.scroll_into_view_if_needed()
+                    await type_label.click()
+                    await self.page.wait_for_timeout(2000) # Wait for results
+                except Exception as e:
+                    logger.warning(f"[{self.portal_name}] Could not select type {type_name}: {e}")
+                    continue
+
+                # Scrape Pages for this Type
+                page_num = 1
+                consecutive_existing_type = 0
+                
+                while True:
+                    logger.info(f"[{self.portal_name}] Scraping {type_name} - Page {page_num}")
+                    
+                    # Wait for cards
+                    # Sometimes there are no results, so we wait briefly
+                    try:
+                        await self.page.wait_for_selector('article[data-testid="property-card"]', state='visible', timeout=5000)
+                    except:
+                        logger.info(f"[{self.portal_name}] No properties found for {type_name} on page {page_num}")
+                        break
+
+                    cards = await self.page.locator('article[data-testid="property-card"]').all()
+                    logger.info(f"[{self.portal_name}] Found {len(cards)} cards on page.")
+                    
+                    if not cards:
+                        break
+
+                    for i, card in enumerate(cards):
+                        try:
+                            # Extract data from attributes (much cleaner!)
+                            type_attr = await card.get_attribute("data-property-type") or "Inmueble"
+                            city_attr = await card.get_attribute("data-property-city") or ""
+                            suburb_attr = await card.get_attribute("data-property-suburb") or ""
+                            price_attr = await card.get_attribute("data-property-price") or "0"
+                            area_attr = await card.get_attribute("data-property-area") or "0"
+                            rooms_attr = await card.get_attribute("data-property-rooms") or "0"
+                            
+                            title = f"{type_attr} en Alquiler en {suburb_attr}, {city_attr}"
+                            location = f"{suburb_attr}, {city_attr}"
+                            price = float(price_attr)
+                            area = float(area_attr)
+                            bedrooms = int(rooms_attr)
+
+                            link_el = card.locator('a[data-testid="property-card-link"]')
+                            link_href = await link_el.get_attribute("href")
+                            link = f"{self.base_url}{link_href}"
+                            
+                            # Image
+                            # Try to get background image style
+                            # Selector from dump: figure > div[style]
+                            # Or just first div with background image
+                            image_url = None
+                            try:
+                                style = await card.locator("figure > div").first.get_attribute("style")
+                                if style and "url(" in style:
+                                    import re
+                                    match = re.search(r'url\("?(.*?)"?\)', style)
+                                    if match:
+                                        image_url = match.group(1)
+                            except:
+                                pass
+
+                            status = await self.process_property({
+                                "title": title,
+                                "price": price,
+                                "location": location,
+                                "link": link,
+                                "image_url": image_url,
+                                "area": area,
+                                "bedrooms": bedrooms,
+                                "source": self.portal_name
+                            })
+
+                            if status == "existing":
+                                consecutive_existing_type += 1
+                            else:
+                                consecutive_existing_type = 0
+                            
+                        except Exception as e:
+                            logger.error(f"[{self.portal_name}] Error parsing card {i}: {e}")
+
+                    if self.should_stop_scraping(consecutive_existing_type):
+                        logger.info(f"[{self.portal_name}] Stopping {type_name} due to existing limit.")
+                        break
+
+                    # Pagination
+                    # Look for Next button. Common patterns: Text "Siguiente", ">", or classes.
+                    # Since I couldn't find it in grep, I'll try generic text locators.
+                    try:
+                        # Try finding a button/link with "Siguiente" or icon
+                        # We will try a few selectors
+                        next_btn = self.page.locator('li.next a, li.next button, a:has-text("Siguiente"), button:has-text("Siguiente")')
+                        
+                        if await next_btn.count() > 0 and await next_btn.first.is_visible():
+                            # Check if disabled
+                            parent_li = next_btn.locator("xpath=..") # Assuming it's inside an li
+                            class_attr = await parent_li.get_attribute("class") or ""
+                            if "disabled" in class_attr:
+                                logger.info(f"[{self.portal_name}] Next button disabled (end of list).")
+                                break
+                                
+                            await next_btn.first.click()
+                            await self.page.wait_for_timeout(3000)
+                            page_num += 1
+                        else:
+                            # Try just ">"
+                            next_symbol = self.page.locator('a:has-text(">"), button:has-text(">")')
+                            if await next_symbol.count() > 0 and await next_symbol.first.is_visible():
+                                await next_symbol.first.click()
+                                await self.page.wait_for_timeout(3000)
+                                page_num += 1
+                            else:
+                                logger.info(f"[{self.portal_name}] No 'Next' button found on page {page_num}.")
+                                break
+                    except Exception as e:
+                        logger.warning(f"[{self.portal_name}] Pagination error: {e}")
+                        break
+                
+                # Uncheck current type to verify next
+                try:
+                    await type_label.scroll_into_view_if_needed()
+                    await type_label.click()
+                    await self.page.wait_for_timeout(1000)
+                except:
+                    pass
+
+        except Exception as e:
+            logger.error(f"[{self.portal_name}] Error during scrape: {e}")
+            await self.dump_html(prefix="error_panda")
         finally:
             await self.close_browser()
-
-    
-    async def _scrape_url(self, url):
-        logger.info(f"Navigating to {url}")
-        await self.navigate(url)
-        content = await self.page.content()
-        soup = BeautifulSoup(content, 'html.parser')
-        
-        # Select by data-testid="property-card"
-        cards = soup.select('article[data-testid="property-card"]')
-        logger.info(f"Found {len(cards)} properties on Panda")
-        
-        count = 0
-        consecutive_existing = 0
-
-        for card in cards:
-            try:
-                # Extract data attributes
-                attrs = card.attrs
-                
-                title = f"{attrs.get('data-property-type', 'Inmueble')} en {attrs.get('data-property-suburb', '')}, {attrs.get('data-property-city', '')}"
-                price_raw = attrs.get('data-property-price', '0')
-                price = float(price_raw) if price_raw else 0
-                
-                location = f"{attrs.get('data-property-suburb', '')}, {attrs.get('data-property-city', '')}".strip(', ')
-                
-                # Link
-                link_tag = card.select_one('a[data-testid="property-card-link"]')
-                full_link = ""
-                if link_tag and link_tag.has_attr('href'):
-                    full_link = f"{self.base_url}{link_tag['href']}"
-                
-                # Image
-                # In debug html: style="background-image: url("...")" in the first div inside figure
-                image_url = None
-                img_div = card.select_one('figure div[style*="background-image"]')
-                if img_div:
-                    style = img_div['style']
-                    import re
-                    match = re.search(r'url\("?(.*?)"?\)', style)
-                    if match:
-                        image_url = match.group(1).strip()
-                
-                # Details
-                area = float(attrs.get('data-property-area', 0))
-                bedrooms = int(attrs.get('data-property-rooms', 0))
-                bathrooms = int(attrs.get('data-property-bathrooms', 0))
-                
-                # Description logic if needed (not in card usually)
-                
-                entry = {
-                    "title": title,
-                    "price": price,
-                    "location": location,
-                    "link": full_link,
-                    "image_url": image_url,
-                    "source": self.portal_name,
-                    "area": area,
-                    "bedrooms": bedrooms,
-                    # "bathrooms": bathrooms # Model might not have this yet, check Property model
-                }
-                
-                status = await self.process_property(entry)
-                count += 1
-                
-                # Stop logic
-                if status == "existing":
-                    consecutive_existing += 1
-                elif status == "new" or status == "updated":
-                    consecutive_existing = 0
-                
-                if self.should_stop_scraping(consecutive_existing):
-                    break
-                
-            except Exception as e:
-                logger.error(f"Error parsing Panda card: {e}")
-                continue
-                
-        logger.info(f"Saved {count} properties from Panda")

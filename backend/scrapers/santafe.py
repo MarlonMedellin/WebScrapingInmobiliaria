@@ -11,13 +11,18 @@ class SantaFeScraper(BaseScraper):
         super().__init__(db)
         self.portal_name = "santafe"
         self.base_url = "https://arrendamientossantafe.com"
+        self.last_page_links = set()
+
 
     async def scrape(self):
         try:
-            # URL proporcionada por el usuario con filtros masivos
-            url = f"{self.base_url}/propiedades/?bussines_type=Arrendar&desde=0&hasta=50000000&min_price=0&max_price=50000000&alcobas=&banios=&garaje=&min_area=&max_area="
-            logger.info(f"[{self.portal_name}] Iniciando scraping masivo")
-            await self._scrape_url(url)
+            # GOLDEN URL PARAMETERS (Verified 2026-01-13)
+            # 1. 'page' param must be FIRST.
+            # 2. Must use double ampersand '&&' separator.
+            # 3. 'bussines_type=Arrendar' is sufficient, no extra filters needed.
+            base_url = f"{self.base_url}/propiedades/?page=1&&bussines_type=Arrendar"
+            logger.info(f"[{self.portal_name}] Iniciando scraping (URL Patrón: ?page=X&&...)")
+            await self._scrape_url(base_url)
         finally:
             await self.close_browser()
 
@@ -25,12 +30,22 @@ class SantaFeScraper(BaseScraper):
         page_num = 1
         consecutive_existing = 0
         
-        while page_num <= 15:  # Límite de seguridad
-            current_url = f"{base_url}&page={page_num}" if page_num > 1 else base_url
+        while self.should_continue(page_num, consecutive_existing):
+            # Construction Pattern: ?page={num}&&bussines_type=Arrendar
+            current_url = f"{self.base_url}/propiedades/?page={page_num}&&bussines_type=Arrendar"
+
+            
             logger.info(f"[{self.portal_name}] Explorando página {page_num}: {current_url}")
             
+            # --- LOOP DETECTION ---
+            current_links = set()
+            # ----------------------
+            
             await self.navigate(current_url)
-            # Esperar a que las tarjetas carguen
+            # Add delay to allow rendering and simulated human behavior
+            import random
+            await self.page.wait_for_timeout(random.randint(3000, 5000))
+            
             await self.page.wait_for_selector(".inner-card", timeout=15000)
             
             content = await self.page.content()
@@ -52,6 +67,9 @@ class SantaFeScraper(BaseScraper):
                     if not full_link.startswith("http"):
                         full_link = f"{self.base_url.rstrip('/')}/{full_link.lstrip('/')}"
                     
+                    # Track link for loop detection
+                    current_links.add(full_link)
+
                     # Image
                     image_url = None
                     img_preview = card.select_one(".img-preview")
@@ -64,11 +82,13 @@ class SantaFeScraper(BaseScraper):
                     # Location (Sector)
                     loc_tag = card.select_one(".sector p")
                     location = loc_tag.get_text(strip=True).replace("Ubicación:", "").strip() if loc_tag else "Medellín"
+                    if "medellín" not in location.lower() and "medellin" not in location.lower():
+                        location = f"{location}, Medellín"
 
                     # Title / Type
                     type_tag = card.select_one(".tipo-inmueble")
-                    prop_type = type_tag.get_text(strip=True).replace("Tipo:", "").strip() if type_tag else "Inmueble"
-                    title = f"{prop_type} en {location}"
+                    property_type_raw = type_tag.get_text(strip=True).replace("Tipo:", "").strip() if type_tag else "Inmueble"
+                    title = f"{property_type_raw} en {location}"
 
                     # Price
                     price_tag = card.select_one(".precio p")
@@ -91,9 +111,6 @@ class SantaFeScraper(BaseScraper):
                         text = alcobas_tag.get_text(strip=True)
                         match = re.search(r'(\d+)', text)
                         if match: bedrooms = int(match.group(1))
-
-                    # Los baños no suelen estar en el listado de Santa Fe, pero lo dejamos por si acaso
-                    # o se podría extraer del detalle si fuera crítico.
 
                     entry = {
                         "title": title,
@@ -122,5 +139,18 @@ class SantaFeScraper(BaseScraper):
                     logger.error(f"[{self.portal_name}] Error procesando card: {e}")
                     continue
             
+            # --- Check for Infinite Loop (Page N == Page N-1) ---
+            if page_num > 1 and current_links == self.last_page_links:
+                logger.warning(f"[{self.portal_name}] 🛑 LOOP DETECTED: Page {page_num} is identical to Page {page_num-1}. Server is ignoring 'page' param.")
+                break
+            
+            self.last_page_links = current_links
+            # ----------------------------------------------------
+
             page_num += 1
             await self.page.wait_for_timeout(1000)
+
+    def should_continue(self, page_num, consecutive_existing):
+        if self.seed_mode:
+            return page_num <= self.max_pages
+        return not self.should_stop_scraping(consecutive_existing)

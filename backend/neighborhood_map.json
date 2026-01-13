@@ -13,6 +13,7 @@
         "Cristo Rey",
         "Guayabal, MEDELLÍN",
         "Guayabal",
+        "Manzanares, Medellín",
         "Santa Fe, Medellín",
         "Guayabal, Santa Fe, Medellín",
         "Santa Fe",
@@ -37,7 +38,8 @@
         "Mayorca",
         "Guayabal, C15 - Guayabal, Guayabal, MEDELLÍN",
         "Cristo Rey, C15 - Guayabal, Cristo Rey, MEDELLÍN",
-        "La Colina"
+        "La Colina",
+        "PALMA DE MAYORCA"
     ],
     "C1 - Popular": [
         "santo domingo",
@@ -48,7 +50,8 @@
     ],
     "C3 - Manrique": [
         "manrique",
-        "Manrique"
+        "Manrique",
+        "MANRIQUE CENTRAL"
     ],
     "C4 - Aranjuez": [
         "Aranjuez, Medellín",
@@ -83,14 +86,18 @@
         "San Germán",
         "Pajarito",
         "Pajarito, MEDELLÍN",
-        "San Germán, MEDELLÍN"
+        "San Germán, MEDELLÍN",
+        "ROBLEDO PALENQUE",
+        "ROBLEDO PAJARITO",
+        "ROBLEDO KENEDY"
     ],
     "C8 - Villa Hermosa": [
         "Villa Hermosa, Medellín, Antioquia, Colombia",
         "Villa Hermosa",
         "Sector La Y, Enciso, Medellín",
         "Enciso",
-        "Villa Hermosa, MEDELLÍN"
+        "Villa Hermosa, MEDELLÍN",
+        "Colombia"
     ],
     "C9 - Buenos Aires": [
         "Buenos Aires, MEDELLÍN",
@@ -100,12 +107,15 @@
         "Buenos Aires, C9 - Buenos Aires, La Asomadera, C9 - Buenos Aires, La Asomadera, MEDELLÍN",
         "Buenos Aires, C9 - Buenos Aires, Buenos Aires, MEDELLÍN",
         "El Salvador",
-        "El Salvador, MEDELLÍN"
+        "El Salvador, MEDELLÍN",
+        "Salvador"
     ],
     "C10 - La Candelaria": [
         "Centro, Medellín",
         "Medellín, Centro, Torres De Bombona",
         "Centro",
+        "Palace,  La Candelaria, Medellín",
+        "Parque Berrio,  La Candelaria, Medellín",
         "Candelaria, Medellín",
         "La Candelaria, MEDELLÍN",
         "La Candelaria",
@@ -127,7 +137,17 @@
         "La Candelaria, C10 - La Candelaria, San Diego, C10 - La Candelaria, San Diego, MEDELLÍN",
         "La Candelaria, C10 - La Candelaria, Prado, C10 - La Candelaria, San Antonio De Prado, MEDELLÍN",
         "La Candelaria, C10 - La Candelaria, Villa Nueva, C10 - La Candelaria, Villa Nueva, MEDELLÍN",
-        "La Candelaria, C10 - La Candelaria, Boston, C10 - La Candelaria, Boston, MEDELLÍN"
+        "La Candelaria, C10 - La Candelaria, Boston, C10 - La Candelaria, Boston, MEDELLÍN",
+        "San Diego Poblado",
+        "Poblado",
+        "Parque Berrio",
+        "Palace",
+        "Prado Centro",
+        "San Antonio",
+        "San Antonio De Pereira",
+        "POBLADO DEL SUR",
+        "CENTRO DE LA MODA",
+        "PARQUE"
     ],
     "C11 - Laureles - Estadio": [
         "Laureles Medellín, MEDELLÍN",
@@ -136,6 +156,7 @@
         "Conquistadores, MEDELLÍN",
         "Conquistadores, El Estadio, Medellín",
         "Conquistadores",
+        "La 33,  Conquistadores, Medellín",
         "Estadio, MEDELLÍN",
         "Estadio, Medellín, Antioquia, Colombia",
         "El Velódromo, MEDELLÍN",
@@ -162,7 +183,14 @@
         "Santa Teresita",
         "Carlos E. Restrepo",
         "Carlos E. Restrepo, MEDELLÍN",
-        "Santa Teresita, MEDELLÍN"
+        "Santa Teresita, MEDELLÍN",
+        "Castellana",
+        "Velodromo",
+        "La 33",
+        "Laureles El Nogal",
+        "LAURELES NOGAL",
+        "LAURELES LORENA",
+        "BELEN LA CASTELLANA"
     ],
     "C12 - La América": [
         "Barrio Cristóbal, MEDELLÍN",
@@ -195,7 +223,12 @@
         "La América, C12 - La América, Almería, C12 - La América, Almería, MEDELLÍN",
         "La América, C12 - La América, El Danubio, C12 - La América, El Danubio , MEDELLÍN",
         "Simón Bolívar",
-        "Simón Bolívar Medellín, MEDELLÍN"
+        "Simón Bolívar Medellín, MEDELLÍN",
+        "San Cristobal",
+        "Floresta",
+        "America",
+        "FLORESTA SANTA LUCIA",
+        "SANTA LUCIA"
     ],
     "C13 - San Javier": [
         "san javier",
@@ -273,7 +306,9 @@
         "Alejandría, MEDELLÍN",
         "La Calera, MEDELLÍN",
         "Manila, MEDELLÍN",
-        "La Frontera  Campestre"
+        "La Frontera  Campestre",
+        "Belen Granada",
+        "La Frontera"
     ],
     "C16 - Belén": [
         "Belén, Medellín, Antioquia, Colombia",
@@ -336,7 +371,38 @@
         "El Nogal  Los Almendros",
         "El Nogal  Los Almendros, MEDELLÍN",
         "La Nubia, MEDELLÍN",
-        "San Bernardo, MEDELLÍN"
+        "San Bernardo, MEDELLÍN",
+        "Malibu",
+        "Estacion Nutibara Metroplus",
+        "Belen Fatima",
+        "Belen Las Playas",
+        "Belen,  Belen Las Playas, Medellín",
+        "Belen Buena Vista",
+        "Belen La Gloria",
+        "Belen Aguas Frias",
+        "Belen Altavista",
+        "Belen Miravalle",
+        "Belen Los Alpes",
+        "Belen Parque",
+        "Belen Las Mercedes",
+        "Belen La Palma",
+        "Belen Las Violetas",
+        "Belen Alameda",
+        "Belen San Bernardo",
+        "Belen Rosales",
+        "Belen Los Molinos",
+        "Belen Las Margaritas",
+        "Belen La Nubia",
+        "Belen La Mota",
+        "Porvenir",
+        "El Porvenir",
+        "BELEN NOGAL",
+        "BELEN  LOMA DE LOS BERNAL",
+        "BELEN VICUÑA",
+        "BELEN BUENAVISTA",
+        "BELEN SAN CARLOS",
+        "BELEN PATUCA",
+        "VILLA DE ABURRA"
     ],
     "Corregimientos": [
         "San Antonio De Prado, Medellín",
@@ -436,7 +502,13 @@
         "Envigado, Antioquia, Colombia",
         "Apartamento en Envigado, Antioquia",
         "Envigado",
-        "Envigado General"
+        "Envigado General",
+        "Lopez de Mesa",
+        "El Dorado",
+        "Cumbres",
+        "El Chingui",
+        "Las Antillas",
+        "QUEBRADA CLARA ENVIGADO"
     ],
     "Itagüí": [
         "Itagüí, Santa Maria",
@@ -469,7 +541,9 @@
         "Las Acacias",
         "Itagüí, Las Margaritas",
         "Las Margaritas",
-        "Suramericana, MEDELLÍN"
+        "Suramericana, MEDELLÍN",
+        "ITAGUI PILSEN",
+        "ITAGUI LA ALDEA"
     ],
     "Sabaneta": [
         "Sabaneta, SABANETA",
@@ -516,6 +590,7 @@
         "Rionegro",
         "Guarne",
         "Marinilla",
-        "Santa Fe de Antioquia"
+        "Santa Fe de Antioquia",
+        "COPACABANA EL ZARZAL"
     ]
 }
