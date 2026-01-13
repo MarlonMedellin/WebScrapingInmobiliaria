@@ -34,7 +34,10 @@
         "Planeco",
         "Mayorca, Guayabal, Medellín",
         "Guayabal, Mayorca, Medellín",
-        "Mayorca"
+        "Mayorca",
+        "Guayabal, C15 - Guayabal, Guayabal, MEDELLÍN",
+        "Cristo Rey, C15 - Guayabal, Cristo Rey, MEDELLÍN",
+        "La Colina"
     ],
     "C1 - Popular": [
         "santo domingo",
@@ -75,19 +78,29 @@
         "Pablo Tobon Uribe, Cordoba, Medellín",
         "Córdoba",
         "Florencia, Medellín",
-        "Florencia"
+        "Florencia",
+        "La Pilarica, MEDELLÍN",
+        "San Germán",
+        "Pajarito",
+        "Pajarito, MEDELLÍN",
+        "San Germán, MEDELLÍN"
     ],
     "C8 - Villa Hermosa": [
         "Villa Hermosa, Medellín, Antioquia, Colombia",
         "Villa Hermosa",
         "Sector La Y, Enciso, Medellín",
-        "Enciso"
+        "Enciso",
+        "Villa Hermosa, MEDELLÍN"
     ],
     "C9 - Buenos Aires": [
         "Buenos Aires, MEDELLÍN",
         "Buenos Aires",
         "La Asomadera, MEDELLÍN",
-        "La Asomadera"
+        "La Asomadera",
+        "Buenos Aires, C9 - Buenos Aires, La Asomadera, C9 - Buenos Aires, La Asomadera, MEDELLÍN",
+        "Buenos Aires, C9 - Buenos Aires, Buenos Aires, MEDELLÍN",
+        "El Salvador",
+        "El Salvador, MEDELLÍN"
     ],
     "C10 - La Candelaria": [
         "Centro, Medellín",
@@ -107,7 +120,14 @@
         "El Chagualo, Medellín",
         "El Chagualo",
         "Bombona, MEDELLÍN",
-        "Bomboná"
+        "Bomboná",
+        "La Candelaria, C10 - La Candelaria, Prado, C10 - La Candelaria, Prado Medellín, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, La Candelaria, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, Bomboná, C10 - La Candelaria, Bombona, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, San Diego, C10 - La Candelaria, San Diego, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, Prado, C10 - La Candelaria, San Antonio De Prado, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, Villa Nueva, C10 - La Candelaria, Villa Nueva, MEDELLÍN",
+        "La Candelaria, C10 - La Candelaria, Boston, C10 - La Candelaria, Boston, MEDELLÍN"
     ],
     "C11 - Laureles - Estadio": [
         "Laureles Medellín, MEDELLÍN",
@@ -129,7 +149,20 @@
         "Florida Nueva, MEDELLÍN",
         "Florida Nueva",
         "Lorena, MEDELLÍN",
-        "Lorena"
+        "Lorena",
+        "Laureles, C11 - Laureles - Estadio, Florida Nueva, C11 - Laureles - Estadio, Florida Nueva, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, La Castellana, C11 - Laureles - Estadio, La Castellana, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Lorena, C11 - Laureles - Estadio, Lorena, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Estadio, C11 - Laureles - Estadio, El Velódromo, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Estadio, C11 - Laureles - Estadio, Estadio, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, San Joaquín Laureles, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Los Colores, C11 - Laureles - Estadio, Los Colores, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Laureles Medellín, MEDELLÍN",
+        "Laureles, C11 - Laureles - Estadio, Conquistadores, C11 - Laureles - Estadio, Conquistadores, MEDELLÍN",
+        "Santa Teresita",
+        "Carlos E. Restrepo",
+        "Carlos E. Restrepo, MEDELLÍN",
+        "Santa Teresita, MEDELLÍN"
     ],
     "C12 - La América": [
         "Barrio Cristóbal, MEDELLÍN",
@@ -152,7 +185,17 @@
         "Santa Monica, Medellín",
         "Santa Mónica",
         "El Danubio, MEDELLÍN",
-        "El Danubio"
+        "El Danubio",
+        "Barrio Cristóbal, C12 - La América, Barrio Cristóbal, MEDELLÍN",
+        "La América, C12 - La América, La América, MEDELLÍN",
+        "Calasanz, C12 - La América, Calasanz Parte Alta, MEDELLÍN",
+        "La América, C12 - La América, Santa Mónica, C12 - La América, Santa Mónica , MEDELLÍN",
+        "La Floresta, C12 - La América, La Floresta, MEDELLÍN",
+        "Calasanz, C12 - La América, Calasanz, MEDELLÍN",
+        "La América, C12 - La América, Almería, C12 - La América, Almería, MEDELLÍN",
+        "La América, C12 - La América, El Danubio, C12 - La América, El Danubio , MEDELLÍN",
+        "Simón Bolívar",
+        "Simón Bolívar Medellín, MEDELLÍN"
     ],
     "C13 - San Javier": [
         "san javier",
@@ -197,7 +240,40 @@
         "Las Lomas, El Poblado, Medellín",
         "Las Lomas",
         "La Florida El Poblado, MEDELLÍN",
-        "La Florida"
+        "La Florida",
+        "Las Lomas, MEDELLÍN",
+        "Los González, C14 - El Poblado, La Visitacion Los Gonzalez, MEDELLÍN",
+        "Aguacatala, C14 - El Poblado, Aguacatala, MEDELLÍN",
+        "Lalinde, C14 - El Poblado, Lalinde, MEDELLÍN",
+        "Santa María de los Ángeles, C14 - El Poblado, Santa María De Los Ángeles, MEDELLÍN",
+        "Castropol, C14 - El Poblado, Castropol, MEDELLÍN",
+        "Ciudad del Río, C14 - El Poblado, Ciudad Del Rio, MEDELLÍN",
+        "Loma del Indio, C14 - El Poblado, Loma Del Indio, MEDELLÍN",
+        "Milla de Oro, C14 - El Poblado, Milla De Oro, MEDELLÍN",
+        "Cola del Zorro, C14 - El Poblado, Altos Del Poblado Cola Del Zorro, MEDELLÍN",
+        "La Florida, C14 - El Poblado, La Florida El Poblado, MEDELLÍN",
+        "Las Palmas, C14 - El Poblado, Las Palmas Medellín, MEDELLÍN",
+        "Patio Bonito, C14 - El Poblado, Patio Bonito, MEDELLÍN",
+        "El Tesoro, C14 - El Poblado, El Tesoro, MEDELLÍN",
+        "Alejandría",
+        "El Campestre",
+        "La Calera",
+        "Loma De Los Parra",
+        "Loma De San Julián",
+        "Los Balsos",
+        "Manila",
+        "Provenza",
+        "Granada",
+        "El Campestre La Frontera, MEDELLÍN",
+        "Granada, MEDELLÍN",
+        "Los Balsos, MEDELLÍN",
+        "Provenza, MEDELLÍN",
+        "Loma De Los Parra, MEDELLÍN",
+        "Loma De San Julián, MEDELLÍN",
+        "Alejandría, MEDELLÍN",
+        "La Calera, MEDELLÍN",
+        "Manila, MEDELLÍN",
+        "La Frontera  Campestre"
     ],
     "C16 - Belén": [
         "Belén, Medellín, Antioquia, Colombia",
@@ -241,7 +317,26 @@
         "Miravalle, MEDELLÍN",
         "Miravalle",
         "Belén Aliadas",
-        "Belén Malibú"
+        "Belén Malibú",
+        "Belén, C16 - Belén, Loma de los Bernal, C16 - Belén, La Loma De Los Bernal, MEDELLÍN",
+        "Belén, C16 - Belén, La Mota, C16 - Belén, La Mota, MEDELLÍN",
+        "Belén Malibú, MEDELLÍN",
+        "Belén, C16 - Belén, Los Alpes, C16 - Belén, Los Alpes, MEDELLÍN",
+        "Belén, C16 - Belén, Las Playas, C16 - Belén, Las Playas, MEDELLÍN",
+        "Belén, C16 - Belén, Belén Porvenir, MEDELLÍN",
+        "Belén, C16 - Belén, Rosales, C16 - Belén, Rosales, MEDELLÍN",
+        "Belén, C16 - Belén, Miravalle, C16 - Belén, Miravalle, MEDELLÍN",
+        "Belén Aliadas, MEDELLÍN",
+        "Belén, C16 - Belén, Nueva Villa de Aburrá, C16 - Belén, Nueva Villa De Aburrá, MEDELLÍN",
+        "Belén, C16 - Belén, Fátima, C16 - Belén, Fátima Medellín, MEDELLÍN",
+        "Belén, C16 - Belén, La Palma, C16 - Belén, La Palma, MEDELLÍN",
+        "Belén, C16 - Belén, Rodeo Alto, C16 - Belén, Rodeo Alto, MEDELLÍN",
+        "La Nubia",
+        "San Bernardo",
+        "El Nogal  Los Almendros",
+        "El Nogal  Los Almendros, MEDELLÍN",
+        "La Nubia, MEDELLÍN",
+        "San Bernardo, MEDELLÍN"
     ],
     "Corregimientos": [
         "San Antonio De Prado, Medellín",
@@ -373,7 +468,8 @@
         "Itagüí, Las Acacias, Urb. Las Americas",
         "Las Acacias",
         "Itagüí, Las Margaritas",
-        "Las Margaritas"
+        "Las Margaritas",
+        "Suramericana, MEDELLÍN"
     ],
     "Sabaneta": [
         "Sabaneta, SABANETA",
@@ -393,7 +489,8 @@
         "Sabaneta, La Doctora, Century Tower II Apartamentos",
         "La Doctora",
         "Sabaneta, Holanda, Ed. Gireth",
-        "Holanda"
+        "Holanda",
+        "Centro Medellín, MEDELLÍN"
     ],
     "La Estrella": [
         "la estrella",
