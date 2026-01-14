@@ -31,17 +31,23 @@ Un sistema avanzado de web scraping y monitoreo inmobiliario diseñado para reco
 
 ```
 WebScrapingInmobiliaria/
+├── docs/                      # 📚 Documentación Técnica (Contexto, Guías, Reglas)
 ├── backend/
-│   ├── scrapers/            # Motores de extracción (Escala, Fincaraiz, etc.)
+│   ├── scrapers/              # Motores de extracción (Escala, Fincaraiz, etc.)
 │   ├── neighborhood_map.json  # Mapeo de barrios (Clave: Valor)
 │   ├── discovered_neighborhoods.json # Barrios nuevos detectados
-│   ├── core/                # Configuración de Celery y Broker
-│   └── main.py              # API con lógica de filtrado inteligente
+│   ├── core/                  # Configuración de Celery y Broker
+│   └── main.py                # API con lógica de filtrado inteligente
 ├── frontend/
-│   ├── src/App.jsx          # Dashboard central interactivo
-│   └── src/components/      # Componentes de filtrado y visualización
-├── ARCHITECTURE.md          # Detalles técnicos profundos
-└── docker-compose.yml       # Orquestación de servicios
+│   ├── src/App.jsx            # Dashboard central interactivo
+│   └── src/components/        # Componentes de filtrado y visualización
+├── docker-compose.yml         # Orquestación de servicios
+
+## 📚 Documentación Detallada
+*   [Contexto del Proyecto](docs/PROJECT_CONTEXT.md)
+*   [Guía de Desarrollo Local](docs/LOCAL_DEV_GUIDE.md)
+*   [Reglas de Scraping (Golden Rules)](docs/SCRAPING_GOLDEN_RULES.md)
+*   [Historial de Cambios](docs/CHANGELOG_AND_FIXES.md)
 ```
 
 ## 🚀 Despliegue

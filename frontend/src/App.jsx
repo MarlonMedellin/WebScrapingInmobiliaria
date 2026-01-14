@@ -138,13 +138,16 @@ function App() {
             <div className={`stat-card ${scrapingPortals[source] ? 'scraping' : ''}`} key={source}>
               <div className="stat-value">{stats.bySource[source] || 0}</div>
               <div className="stat-label">{source}</div>
-              <button
-                className={`mini-scrape-btn ${scrapingPortals[source] ? 'loading' : ''}`}
-                onClick={() => triggerScrape(source)}
-                disabled={scrapingPortals[source]}
-              >
-                {scrapingPortals[source] ? '⏳' : '▶'}
-              </button>
+              {/* Only show manual scrape buttons in DEV (Local) environment */}
+              {!import.meta.env.PROD && (
+                <button
+                  className={`mini-scrape-btn ${scrapingPortals[source] ? 'loading' : ''}`}
+                  onClick={() => triggerScrape(source)}
+                  disabled={scrapingPortals[source]}
+                >
+                  {scrapingPortals[source] ? '⏳' : '▶'}
+                </button>
+              )}
             </div>
           ))}
         </div>

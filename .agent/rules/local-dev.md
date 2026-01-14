@@ -12,7 +12,12 @@ Cuando el usuario trabaje en desarrollo local:
 
 1. **Siempre usar docker-compose.local.yml** para comandos Docker
 2. **Verificar tuneles SSH** antes de levantar servicios
-3. **Recordar que los scrapers NO funcionan en Docker local** - sugerir ejecutarlos directamente o en el VPS
+3. **⛔ NO EJECUTAR SCRAPERS EN DOCKER LOCAL**. Usar siempre `venv` en Windows. Ver `docs/LOCAL_DEV_GUIDE.md` y `docs/SCRAPING_GOLDEN_RULES.md`.
+
+## Documentación de Referencia
+Antes de responder dudas complejas, consultar:
+- `docs/PROJECT_CONTEXT.md`
+- `docs/LOCAL_DEV_GUIDE.md`
 
 ## Deployment al VPS
 

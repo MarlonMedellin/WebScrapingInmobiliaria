@@ -7,12 +7,12 @@ description: Valida e integra un nuevo portal inmobiliario (E2E)
 Este flujo automatiza la inclusión de un nuevo portal desde la investigación hasta el despliegue en producción.
 
 ## Fase 1: Investigación y Validación
-1. **Navegación:** Acceder a la URL especificada en `nueva-url.md`.
+1. **Navegación:** Acceder a la URL especificada en la tabla de candidatos de `docs/PROJECT_CONTEXT.md`.
 2. **Análisis DOM:** Identificar selectores CSS para:
    - Contenedor del card de propiedad.
    - Título, Precio, Ubicación, Área, Habitaciones.
    - Paginación (URL param o Click).
-3. **Refinamiento:** Actualizar `nueva-url.md` con los selectores exactos y notas técnicas.
+3. **Refinamiento:** Actualizar `docs/PROJECT_CONTEXT.md` con los selectores exactos y notas técnicas.
 4. **Verificación de URL:** Asegurar que la URL maneje correctamente los acentos (ej. Medellín vs Medellin) ya que algunos portales son sensibles.
 
 ## Fase 2: Implementación Backend
@@ -44,4 +44,4 @@ Este flujo automatiza la inclusión de un nuevo portal desde la investigación h
 
 ---
 **Instrucción para el Agente:** 
-Para ejecutar este flujo, lee la información de `nueva-url.md`. Si un portal tiene el estado ⏳ (Pendiente), inicia desde la Fase 1. Si ya tiene ✅, inicia desde la Fase 2.
+Para ejecutar este flujo, lee la información de `docs/PROJECT_CONTEXT.md`. Si un portal tiene el estado ⏳ (Pendiente), inicia desde la Fase 1. Si ya tiene ✅, inicia desde la Fase 2.
