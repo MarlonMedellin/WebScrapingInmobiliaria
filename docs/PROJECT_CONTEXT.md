@@ -89,13 +89,15 @@ All scrapers inherit from `backend/scrapers/base.py`, standardizing:
 - **Property Processing:** Logic to determine if a property is NEW, UPDATED, or EXISTING.
 - **Stop Mechanism:** Stops after $N$ consecutive existing records to save resources.
 
-#### 2. High-Precision Curated Mapping
-- **Broad Collection:** Scrapes everything in the target area to avoid missing data.
-- **Manual Mapping (`neighborhood_map.json`):** Curated master file with 200+ variants mapped to standard neighborhoods.
-- **DB Normalization:** Properties get a `neighborhood_resolved` field used for strict filtering in the Dashboard.
+#### 2. Categorización Estática de Sectores
+- **Clasificación en Origen:** Los scrapers calculan el sector UNA vez al insertar, usando el `neighborhood_map.json`.
+- **Mapeo Determinista:** Mapeado de ~200 variantes de barrios a sectores oficiales (ej: "C14 - El Poblado", "Envigado").
+- **Filtrado de Alta Precisión:** El dashboard utiliza coincidencia exacta sobre la columna `sector` en la BD, eliminando falsos positivos de búsquedas por texto.
+- **Resolución de Colisiones:** Diferenciación automática entre barrios homónimos (ej: "Santa Fe" en Medellín vs "Santa Fe de Antioquia").
 
 ### Data Model (`Property`)
 - **Core Fields:** Title, Price, Location, Link, Image, Source, Area, Bedrooms, Bathrooms.
+- **Classification:** `sector` (Static, indexed), `neighborhood_normalized` (UI Display).
 - **States:** `NEW`, `SEEN`, `ARCHIVED`, `FAVORITE`.
 - **Fields:** `portal_published_date` (for freshness tracking), `last_seen` (for auto-archival).
 

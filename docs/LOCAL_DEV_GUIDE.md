@@ -108,6 +108,13 @@ Descargar masivamente miles de inmuebles (saltándose el límite de "ya vistos")
 3.  **Configurar Env**: `$env:POSTGRES_HOST="localhost"; ...`
 4.  **Ejecutar Worker**: `celery -A core.worker.celery_app worker --loglevel=info`
 
+### Migración de Datos (Sectores)
+Si se añaden nuevos barrios al `neighborhood_map.json` o se cambia la estructura, ejecutar:
+```powershell
+venv\Scripts\python.exe backend\migrate_sectors.py
+```
+*Este script recalcula los sectores de todos los inmuebles existentes en la BD.*
+
 ---
 
 ## 6. Filosofía de Automatización (Antigravity Rules)

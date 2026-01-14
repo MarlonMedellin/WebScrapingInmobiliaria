@@ -6,6 +6,7 @@ This document defines the strict operational rules for each portal integration a
 1.  **Local Execution Only**: Scrapers must be triggered via `celery worker` in a local `venv`, never inside Docker on Windows.
 2.  **Strict Filtering**: All scrapers must respect `backend/scrapers/config.py` for price and zone limits *before* saving to DB.
 3.  **Early Stopping**: Scrapers initiate a stop sequence after encountering **10 consecutive existing properties**.
+4.  **Static Sector Assignment**: Every new property must be assigned a `sector` via `BaseScraper.process_property` before persistence.
 
 ---
 
