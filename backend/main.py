@@ -136,18 +136,44 @@ def get_properties(
     # Ideally: NEW/SEEN -> Date
     properties = query.order_by(Property.created_at.desc()).offset(skip).limit(limit).all()
     
-    # Enrich with days_active
+    # Enrich with days_active and neighborhood_normalized
     from datetime import datetime, timezone
+    from neighborhood_utils import auto_resolve_neighborhood
+    
+    # Load map once per request (or optimize to global)
+    nb_map = {}
+    try:
+        with open("neighborhood_map.json", "r", encoding="utf-8") as f:
+            nb_map = json.load(f)
+    except:
+        pass
+
     now = datetime.now(timezone.utc)
     
     results = []
     for p in properties:
-        # Convert to dict to append extra field (or use Pydantic model with property)
-        # For simplicity in this direct return, we'll cast to dict if SqlAlchemy doesn't interfere
-        # Or better, just let the frontend handle the calculation if created_at is sent?
-        # User explicitly asked for a column/indicator. Let's send it computed.
-        p.days_active = (now - p.created_at).days if p.created_at else 0
-        results.append(p)
+        # Convert to dict to append extra fields
+        # Using __dict__ copy to avoid SqlAlchemy state issues, but omitting internal SA state
+        p_dict = {c.name: getattr(p, c.name) for c in p.__table__.columns}
+        
+        # Computed fields
+        created_at = p.created_at
+        if created_at.tzinfo is None:
+             created_at = created_at.replace(tzinfo=timezone.utc)
+             
+        p_dict['days_active'] = (now - created_at).days if created_at else 0
+        
+        # Normalize Neighborhood
+        # Try to resolve based on existing location string or title
+        raw_loc = p.location or ""
+        raw_title = p.title or ""
+        resolved = auto_resolve_neighborhood(raw_loc, nb_map)
+        if not resolved:
+             resolved = auto_resolve_neighborhood(raw_title, nb_map)
+             
+        p_dict['neighborhood_normalized'] = resolved
+        
+        results.append(p_dict)
         
     return results
 

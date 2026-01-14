@@ -74,7 +74,15 @@ const PropertiesTable = ({ properties, onStatusChange, onSelectProperty }) => {
                                         {prop.title}
                                     </span>
                                 </td>
-                                <td>{prop.location}</td>
+                                <td>
+                                    {prop.neighborhood_normalized ? (
+                                        <span className="location-normalized" title={`Original: ${prop.location}`}>
+                                            📍 {prop.neighborhood_normalized}
+                                        </span>
+                                    ) : (
+                                        <span className="location-original">{prop.location}</span>
+                                    )}
+                                </td>
                                 <td>{prop.area ? `${prop.area} m²` : '--'}</td>
                                 <td>{prop.bedrooms || '--'}</td>
                                 <td className="price-tag">{formatPrice(prop.price)}</td>
