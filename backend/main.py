@@ -138,16 +138,13 @@ def get_properties(
     
     # Enrich with days_active and neighborhood_normalized
     from datetime import datetime, timezone
-    from neighborhood_utils import auto_resolve_neighborhood
+    from neighborhood_utils import auto_resolve_neighborhood, resolve_specific_variant
     
     # Load map once per request (or optimize to global)
     nb_map = {}
-    renaming_map = {}
     try:
         with open("neighborhood_map.json", "r", encoding="utf-8") as f:
             nb_map = json.load(f)
-        with open("neighborhood_renaming.json", "r", encoding="utf-8") as f:
-            renaming_map = json.load(f)
     except:
         pass
 
@@ -155,7 +152,6 @@ def get_properties(
     
     results = []
     for p in properties:
-        # Convert to dict to append extra fields
         p_dict = {c.name: getattr(p, c.name) for c in p.__table__.columns}
         
         # Computed fields
@@ -167,21 +163,14 @@ def get_properties(
         
         # Normalize Neighborhood (Specific Name)
         raw_loc = (p.location or "").strip()
-        raw_title = (p.title or "").strip()
+        # Try finding the specific nice variant
+        specific_name = resolve_specific_variant(raw_loc, nb_map)
         
-        # 1. Try Specific Renaming Map first (for Table "Ubicación")
-        specific_resolved = renaming_map.get(raw_loc)
-        if not specific_resolved:
-            # Try matching keys generally if exact match fails? 
-            # For now, let's stick to direct lookup or simple containment check if needed?
-            # User instructions imply "variant -> specific name". Renaming map keys are raw discovered names.
-            pass
+        # Fallback: if resolve fails, try using title? Or stick to None (let frontend show original)
+        if not specific_name:
+             specific_name = resolve_specific_variant(p.title or "", nb_map)
 
-        # If not found in renaming map, maybe it wasn't discovered/mapped yet.
-        # But we still might want the "Sector" based resolution for filtering purposes, 
-        # but the USER specifically asked for "Barrio Normalizado" in the table column.
-        
-        p_dict['neighborhood_normalized'] = specific_resolved
+        p_dict['neighborhood_normalized'] = specific_name
         
         results.append(p_dict)
         

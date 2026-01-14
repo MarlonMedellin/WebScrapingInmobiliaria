@@ -76,3 +76,42 @@ def auto_resolve_neighborhood(neighborhood: str, nb_map: dict) -> Optional[str]:
                 return category
 
     return None
+
+def resolve_specific_variant(neighborhood: str, nb_map: dict) -> Optional[str]:
+    """
+    Busca el nombre específico del barrio (la variante bonita del mapa)
+    que coincida con el input sucio.
+    Ej: "Calasanz, Medellín" -> "Calasanz"
+    """
+    clean_input = clean_neighborhood_name(neighborhood)
+    if not clean_input or len(clean_input) < 3:
+        return None
+        
+    ignore_keywords = {"la", "el", "los", "las", "del", "sur", "norte", "oriente", "occidente"}
+
+    # Recolectar todas las variantes posibles en una lista
+    all_variants = []
+    for category, variants in nb_map.items():
+        if isinstance(variants, list):
+            all_variants.extend(variants)
+            
+    # CRITICO: Ordenar por longitud descendente para evitar que 
+    # "Prado" haga match con "Prado Verde" antes de tiempo.
+    all_variants.sort(key=lambda v: len(clean_neighborhood_name(v)), reverse=True)
+
+    # 1. Búsqueda
+    for v in all_variants:
+        clean_v = clean_neighborhood_name(v)
+        if len(clean_v) < 3 or clean_v in ignore_keywords:
+            continue
+            
+        # Match Exacto
+        if clean_v == clean_input:
+            return v
+            
+        # Match Contención (Input tien variante)
+        # Ej: "Casa en Prado Verde" tiene "Prado Verde" -> Match
+        if re.search(rf'\b{re.escape(clean_v)}\b', clean_input):
+            return v
+                
+    return None
