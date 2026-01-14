@@ -142,9 +142,12 @@ def get_properties(
     
     # Load map once per request (or optimize to global)
     nb_map = {}
+    renaming_map = {}
     try:
         with open("neighborhood_map.json", "r", encoding="utf-8") as f:
             nb_map = json.load(f)
+        with open("neighborhood_renaming.json", "r", encoding="utf-8") as f:
+            renaming_map = json.load(f)
     except:
         pass
 
@@ -153,7 +156,6 @@ def get_properties(
     results = []
     for p in properties:
         # Convert to dict to append extra fields
-        # Using __dict__ copy to avoid SqlAlchemy state issues, but omitting internal SA state
         p_dict = {c.name: getattr(p, c.name) for c in p.__table__.columns}
         
         # Computed fields
@@ -163,15 +165,23 @@ def get_properties(
              
         p_dict['days_active'] = (now - created_at).days if created_at else 0
         
-        # Normalize Neighborhood
-        # Try to resolve based on existing location string or title
-        raw_loc = p.location or ""
-        raw_title = p.title or ""
-        resolved = auto_resolve_neighborhood(raw_loc, nb_map)
-        if not resolved:
-             resolved = auto_resolve_neighborhood(raw_title, nb_map)
-             
-        p_dict['neighborhood_normalized'] = resolved
+        # Normalize Neighborhood (Specific Name)
+        raw_loc = (p.location or "").strip()
+        raw_title = (p.title or "").strip()
+        
+        # 1. Try Specific Renaming Map first (for Table "Ubicación")
+        specific_resolved = renaming_map.get(raw_loc)
+        if not specific_resolved:
+            # Try matching keys generally if exact match fails? 
+            # For now, let's stick to direct lookup or simple containment check if needed?
+            # User instructions imply "variant -> specific name". Renaming map keys are raw discovered names.
+            pass
+
+        # If not found in renaming map, maybe it wasn't discovered/mapped yet.
+        # But we still might want the "Sector" based resolution for filtering purposes, 
+        # but the USER specifically asked for "Barrio Normalizado" in the table column.
+        
+        p_dict['neighborhood_normalized'] = specific_resolved
         
         results.append(p_dict)
         

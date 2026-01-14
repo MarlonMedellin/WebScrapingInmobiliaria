@@ -141,7 +141,7 @@ const FiltersBar = ({ onFilterChange, portals }) => {
 
                 <div className="filter-group">
                     <select name="neighborhood" value={filters.neighborhood} onChange={handleChange} className="filter-select">
-                        <option value="">Todos los Barrios</option>
+                        <option value="">Todos los Sectores</option>
                         {Object.keys(neighborhoods).map(nb => (
                             <option key={nb} value={nb}>{nb}</option>
                         ))}
