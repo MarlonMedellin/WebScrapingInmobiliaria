@@ -49,31 +49,41 @@ def auto_resolve_neighborhood(neighborhood: str, nb_map: dict) -> Optional[str]:
     """
     Fase 2: Intenta resolver un barrio por contención de palabras clave.
     Si encuentra una coincidencia fuerte, devuelve la categoría (Ej: 'C16 - Belén').
+    Ahora prioriza las variantes más largas para evitar falsos positivos
+    (ej: confundir 'Santa Fe de Antioquia' con 'Santa Fe').
     """
     clean_input = clean_neighborhood_name(neighborhood)
     if not clean_input or len(clean_input) < 3:
         return None
 
-    # Lista de palabras a ignorar por ser demasiado genéricas para autocompletar
+    # Lista de palabras a ignorar por ser demasiado genéricas
     ignore_keywords = {"la", "el", "los", "las", "del", "sur", "norte", "oriente", "occidente"}
 
-    # Intentar coincidencia por 'contención'
+    # Recolectar tuplas (variante, categoria)
+    all_pairs = []
     for category, variants in nb_map.items():
-        for variant in variants:
-            clean_variant = clean_neighborhood_name(variant)
+        if isinstance(variants, list):
+            for v in variants:
+                all_pairs.append((v, category))
+    
+    # Ordenar por longitud de la variante descendente
+    # Así "Santa Fe de Antioquia" (largo) se evalúa antes que "Santa Fe" (corto)
+    all_pairs.sort(key=lambda pair: len(clean_neighborhood_name(pair[0])), reverse=True)
+
+    for variant, category in all_pairs:
+        clean_variant = clean_neighborhood_name(variant)
+        
+        # Validaciones de longitud mínima
+        if len(clean_variant) < 4 or clean_variant in ignore_keywords:
+            continue
+        
+        # Caso 1: La variante está contenida en el input con limites de palabra
+        if re.search(rf'\b{re.escape(clean_variant)}\b', clean_input):
+            return category
             
-            # Solo considerar variantes con palabras significativas (>3 letras)
-            if len(clean_variant) < 4 or clean_variant in ignore_keywords:
-                continue
-            
-            # Caso 1: La variante está contenida en el input (Ej: 'belen' está en 'belen de los alpes')
-            # Usamos regex para asegurar que sea una palabra completa
-            if re.search(rf'\b{re.escape(clean_variant)}\b', clean_input):
-                return category
-                
-            # Caso 2: El input está contenido en la variante (Ej: 'poblado' está en 'el poblado')
-            if re.search(rf'\b{re.escape(clean_input)}\b', clean_variant):
-                return category
+        # Caso 2: Match exacto (por si acaso regex falla o algo raro)
+        if clean_variant == clean_input:
+             return category
 
     return None
 
