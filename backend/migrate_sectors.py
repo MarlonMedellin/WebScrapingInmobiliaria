@@ -10,11 +10,15 @@ from neighborhood_utils import auto_resolve_neighborhood
 
 def load_neighborhood_map():
     """Load the neighborhood mapping from JSON file"""
+    import os
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    map_path = os.path.join(script_dir, "neighborhood_map.json")
+    
     try:
-        with open("neighborhood_map.json", "r", encoding="utf-8") as f:
+        with open(map_path, "r", encoding="utf-8") as f:
             return json.load(f)
     except Exception as e:
-        print(f"Error loading neighborhood map: {e}")
+        print(f"Error loading neighborhood map from {map_path}: {e}")
         return {}
 
 def migrate_sectors():
@@ -35,9 +39,6 @@ def migrate_sectors():
         print(f"Processing {total} properties...")
         
         for i, prop in enumerate(properties, 1):
-            if i % 100 == 0:
-                print(f"Progress: {i}/{total}")
-            
             # Try to resolve sector from location first
             sector = auto_resolve_neighborhood(prop.location or "", nb_map)
             
@@ -52,8 +53,12 @@ def migrate_sectors():
             
             prop.sector = sector
             updated += 1
+            
+            if i % 100 == 0:
+                print(f"Progress: {i}/{total} - Committing batch...")
+                db.commit()
         
-        # Commit all changes
+        # Final commit for the last batch
         db.commit()
         print(f"\n✅ Migration complete!")
         print(f"   Total properties: {total}")
