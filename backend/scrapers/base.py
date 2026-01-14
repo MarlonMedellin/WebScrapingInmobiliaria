@@ -81,6 +81,27 @@ class BaseScraper(ABC):
         if "source" not in data:
             data["source"] = self.portal_name
 
+        # --- Calculate Sector (Static Classification) ---
+        if "sector" not in data:
+            import json
+            from neighborhood_utils import auto_resolve_neighborhood
+            
+            try:
+                with open("neighborhood_map.json", "r", encoding="utf-8") as f:
+                    nb_map = json.load(f)
+                
+                # Try location first, then title
+                sector = auto_resolve_neighborhood(location, nb_map)
+                if not sector:
+                    sector = auto_resolve_neighborhood(title, nb_map)
+                
+                # Default to "Sin Clasificar" if no match
+                data["sector"] = sector if sector else "Sin Clasificar"
+            except Exception as e:
+                logger.warning(f"[{self.portal_name}] Failed to calculate sector: {e}")
+                data["sector"] = "Sin Clasificar"
+        # ----------------------------------------------
+
         # --- PHASE 5: Pre-Save Filtering ---
         # 1. Price Check
         if price > SEARCH_CRITERIA["max_price"]:

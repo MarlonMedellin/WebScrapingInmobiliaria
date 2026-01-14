@@ -102,24 +102,11 @@ def get_properties(
     if max_area is not None:
         query = query.filter(Property.area <= max_area)
 
-    # 4. Neighborhood Mapping Filter
+    # 4. Sector Filter (Static Classification)
     if neighborhood:
-        # Cargar mapeo
-        map_path = "neighborhood_map.json"
-        try:
-            with open(map_path, "r", encoding="utf-8") as f:
-                nb_map = json.load(f)
-            
-            variants = nb_map.get(neighborhood, [neighborhood])
-            # Crear filtros OR para cada variante buscando tanto en location como en title
-            nb_filters = []
-            for v in variants:
-                nb_filters.append(Property.location.ilike(f"%{v}%"))
-                nb_filters.append(Property.title.ilike(f"%{v}%"))
-            
-            query = query.filter(or_(*nb_filters))
-        except Exception as e:
-            print(f"Error filtering neighborhood: {e}")
+        # The 'neighborhood' parameter now represents the sector name
+        # Filter directly by the static sector field
+        query = query.filter(Property.sector == neighborhood)
 
     # 5. Text Search (Title or Location)
     if search:
@@ -177,13 +164,25 @@ def get_properties(
     return results
 
 @app.get("/neighborhoods")
-def get_neighborhood_map():
-    """Retorna el mapeo de barrios para el dropdown del frontend."""
-    try:
-        with open("neighborhood_map.json", "r", encoding="utf-8") as f:
-            return json.load(f)
-    except:
-        return {}
+def get_neighborhoods(db: Session = Depends(get_db)):
+    """
+    Returns distinct sectors from the database.
+    This replaces the old neighborhood map approach with static sector classification.
+    """
+    from sqlalchemy import func, distinct
+    
+    # Get all distinct sectors, excluding None and "Sin Clasificar" for cleaner UI
+    sectors = db.query(distinct(Property.sector)).filter(
+        Property.sector.isnot(None),
+        Property.sector != "Sin Clasificar"
+    ).order_by(Property.sector).all()
+    
+    # Convert to simple list and add "Sin Clasificar" at the end
+    sector_list = [s[0] for s in sectors if s[0]]
+    sector_list.append("Sin Clasificar")
+    
+    # Return as dict for compatibility with frontend (expects object with keys)
+    return {sector: [] for sector in sector_list}
 
 @app.get("/neighborhoods/discovered")
 def get_discovered_neighborhoods():

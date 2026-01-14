@@ -9,6 +9,7 @@ class Property(Base):
     title = Column(String, nullable=True)
     price = Column(Float, nullable=True) # Using Float for flexibility, or BigInteger
     location = Column(String, nullable=True)
+    sector = Column(String, nullable=True, index=True)  # Static sector classification
     link = Column(String, unique=True, index=True, nullable=False)
     description = Column(Text, nullable=True)
     
